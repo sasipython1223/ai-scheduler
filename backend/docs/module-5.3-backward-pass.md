@@ -55,7 +55,7 @@ interface BackwardPassResult {
 // Example Output Task:
 {
   id: 'A',
-  name: 'Analysis', 
+  name: 'Analysis',
   duration: 3,
   earlyStart: '04 Aug 2025',
   earlyFinish: '06 Aug 2025',
@@ -72,74 +72,123 @@ interface BackwardPassResult {
 ### **Example 1: Linear Chain Critical Path**
 
 **Input:**
+
 ```javascript
 const tasks = [
-  { id: 'A', duration: 3, earlyStart: '04 Aug 2025', earlyFinish: '06 Aug 2025' },
-  { id: 'B', duration: 2, earlyStart: '07 Aug 2025', earlyFinish: '08 Aug 2025' },
-  { id: 'C', duration: 4, earlyStart: '11 Aug 2025', earlyFinish: '14 Aug 2025' }
+  {
+    id: 'A',
+    duration: 3,
+    earlyStart: '04 Aug 2025',
+    earlyFinish: '06 Aug 2025',
+  },
+  {
+    id: 'B',
+    duration: 2,
+    earlyStart: '07 Aug 2025',
+    earlyFinish: '08 Aug 2025',
+  },
+  {
+    id: 'C',
+    duration: 4,
+    earlyStart: '11 Aug 2025',
+    earlyFinish: '14 Aug 2025',
+  },
 ];
 
 const links = [
   { from: 'A', to: 'B', type: 'FS', lag: 0 },
-  { from: 'B', to: 'C', type: 'FS', lag: 0 }
+  { from: 'B', to: 'C', type: 'FS', lag: 0 },
 ];
 ```
 
 **Output:**
 | Task | Early Start | Early Finish | Late Start | Late Finish | Total Float | Critical |
 |------|-------------|--------------|------------|-------------|-------------|----------|
-| A    | 04 Aug 2025 | 06 Aug 2025  | 04 Aug 2025| 06 Aug 2025 | 0 days      | ✅ Yes   |
-| B    | 07 Aug 2025 | 08 Aug 2025  | 07 Aug 2025| 08 Aug 2025 | 0 days      | ✅ Yes   |
-| C    | 11 Aug 2025 | 14 Aug 2025  | 11 Aug 2025| 14 Aug 2025 | 0 days      | ✅ Yes   |
+| A | 04 Aug 2025 | 06 Aug 2025 | 04 Aug 2025| 06 Aug 2025 | 0 days | ✅ Yes |
+| B | 07 Aug 2025 | 08 Aug 2025 | 07 Aug 2025| 08 Aug 2025 | 0 days | ✅ Yes |
+| C | 11 Aug 2025 | 14 Aug 2025 | 11 Aug 2025| 14 Aug 2025 | 0 days | ✅ Yes |
 
 **Critical Path:** A → B → C (15 working days total)
 
 ### **Example 2: Start-to-Start (SS) Relationship**
 
 **Input:**
+
 ```javascript
 const tasks = [
-  { id: 'A', duration: 5, earlyStart: '04 Aug 2025', earlyFinish: '08 Aug 2025' },
-  { id: 'B', duration: 3, earlyStart: '06 Aug 2025', earlyFinish: '08 Aug 2025' }
+  {
+    id: 'A',
+    duration: 5,
+    earlyStart: '04 Aug 2025',
+    earlyFinish: '08 Aug 2025',
+  },
+  {
+    id: 'B',
+    duration: 3,
+    earlyStart: '06 Aug 2025',
+    earlyFinish: '08 Aug 2025',
+  },
 ];
 
 const links = [
-  { from: 'A', to: 'B', type: 'SS', lag: 2 }  // B starts 2 days after A starts
+  { from: 'A', to: 'B', type: 'SS', lag: 2 }, // B starts 2 days after A starts
 ];
 ```
 
 **Processing Logic:**
+
 ```
 1. B.lateStart constrained by SS: A.lateStart + 2
-2. A.lateStart calculated from B: B.lateStart - 2  
+2. A.lateStart calculated from B: B.lateStart - 2
 3. Multi-iteration ensures consistency
 ```
 
 **Output:**
 | Task | Early Start | Late Start | Total Float | Logic Constraint |
 |------|-------------|------------|-------------|------------------|
-| A    | 04 Aug 2025 | 04 Aug 2025| 0 days      | SS drives B      |
-| B    | 06 Aug 2025 | 06 Aug 2025| 0 days      | SS from A+2      |
+| A | 04 Aug 2025 | 04 Aug 2025| 0 days | SS drives B |
+| B | 06 Aug 2025 | 06 Aug 2025| 0 days | SS from A+2 |
 
 ### **Example 3: Parallel Paths with Float**
 
 **Input:**
+
 ```javascript
 const tasks = [
-  { id: 'A', duration: 1, earlyStart: '04 Aug 2025', earlyFinish: '04 Aug 2025' },
-  { id: 'B', duration: 5, earlyStart: '05 Aug 2025', earlyFinish: '11 Aug 2025' }, // Critical
-  { id: 'C', duration: 2, earlyStart: '05 Aug 2025', earlyFinish: '06 Aug 2025' }, // Float
-  { id: 'D', duration: 1, earlyStart: '12 Aug 2025', earlyFinish: '12 Aug 2025' }
+  {
+    id: 'A',
+    duration: 1,
+    earlyStart: '04 Aug 2025',
+    earlyFinish: '04 Aug 2025',
+  },
+  {
+    id: 'B',
+    duration: 5,
+    earlyStart: '05 Aug 2025',
+    earlyFinish: '11 Aug 2025',
+  }, // Critical
+  {
+    id: 'C',
+    duration: 2,
+    earlyStart: '05 Aug 2025',
+    earlyFinish: '06 Aug 2025',
+  }, // Float
+  {
+    id: 'D',
+    duration: 1,
+    earlyStart: '12 Aug 2025',
+    earlyFinish: '12 Aug 2025',
+  },
 ];
 ```
 
 **Output:**
 | Task | Total Float | Free Float | Critical Path |
 |------|-------------|------------|---------------|
-| A    | 0 days      | 0 days     | ✅ Critical   |
-| B    | 0 days      | 0 days     | ✅ Critical   |
-| C    | 3 days      | 3 days     | ❌ Non-Critical|
-| D    | 0 days      | 0 days     | ✅ Critical   |
+| A | 0 days | 0 days | ✅ Critical |
+| B | 0 days | 0 days | ✅ Critical |
+| C | 3 days | 3 days | ❌ Non-Critical|
+| D | 0 days | 0 days | ✅ Critical |
 
 **Critical Path:** A → B → D (7 working days)
 
@@ -148,42 +197,49 @@ const tasks = [
 ### **All Logic Types Implemented**
 
 #### **Finish-to-Start (FS) - Standard Dependency**
+
 ```typescript
 // Predecessor must finish before successor starts
-predecessorLateFinish = min(successorLateStart - lag - 1)
+predecessorLateFinish = min(successorLateStart - lag - 1);
 ```
 
 #### **Start-to-Start (SS) - Parallel Start Constraint**
+
 ```typescript
 // Predecessor start affects successor start timing
-predecessorLateStart = min(successorLateStart - lag)
+predecessorLateStart = min(successorLateStart - lag);
 ```
 
 #### **Finish-to-Finish (FF) - Coordinated Finish**
+
 ```typescript
 // Finish dates must be coordinated with lag
-predecessorLateFinish = min(successorLateFinish - lag)
+predecessorLateFinish = min(successorLateFinish - lag);
 ```
 
 #### **Start-to-Finish (SF) - Just-in-Time Delivery**
+
 ```typescript
 // Predecessor start affects successor finish
-predecessorLateStart = min(successorLateFinish - lag)
+predecessorLateStart = min(successorLateFinish - lag);
 ```
 
 ## 🛠 **Edge Case Handling**
 
 ### **Complex Dependency Chains**
+
 - **Multi-iteration Processing:** Handles chains requiring multiple calculation passes
 - **Convergence Detection:** Ensures algorithm completes within maximum iterations
 - **Constraint Conflicts:** Resolves competing late date requirements
 
 ### **Special Task Types**
+
 - **Milestones (0 duration):** Late start equals late finish
 - **Terminal Tasks:** Late dates set to early dates initially
 - **Orphaned Tasks:** Graceful handling of tasks without successors
 
 ### **Floating Point Precision**
+
 - **Epsilon Comparison:** Uses ≤0.001 for critical task detection
 - **Working Days Rounding:** Proper handling of partial day calculations
 - **Float Accuracy:** Maintains precision across complex calculations
@@ -196,7 +252,7 @@ predecessorLateStart = min(successorLateFinish - lag)
 📁 Backward Pass Implementation:
 ├── cmp-backward-pass.ts         # Main API orchestration
 ├── BackwardPassEngine.ts        # Core algorithm processing
-├── FloatCalculator.ts           # Float calculations & critical detection  
+├── FloatCalculator.ts           # Float calculations & critical detection
 ├── GraphUtils.ts               # Dependency graph utilities
 └── DateUtils.ts                # Working days calculations
 ```
@@ -221,6 +277,7 @@ predecessorLateStart = min(successorLateFinish - lag)
 - **Integration:** Complete forward/backward pass cycle validation
 
 ### **Production Quality**
+
 - **ESLint Compliance:** Zero violations
 - **Type Safety:** Full TypeScript coverage
 - **Error Handling:** Comprehensive validation and error recovery
@@ -229,11 +286,13 @@ predecessorLateStart = min(successorLateFinish - lag)
 ## 🎯 **Integration Points**
 
 ### **Input Dependencies**
+
 - **Module 5.2 Output:** Early start/finish dates from forward pass
 - **Working Days Calendar:** Business day calculations
 - **Logic Links:** Validated dependency relationships
 
 ### **Output Consumers**
+
 - **Critical Path Analysis:** Optimization and what-if scenarios
 - **Schedule Visualization:** Gantt chart rendering with float display
 - **AI Integration:** Intelligent schedule recommendations
