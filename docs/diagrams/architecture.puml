@@ -1,0 +1,66 @@
+@startuml "AI Scheduler Architecture"
+!define TITLE AI Scheduler - Complete System Architecture
+title TITLE
+skinparam componentStyle rectangle
+skinparam shadowing true
+skinparam defaultTextAlignment center
+
+package "Core Scheduling System\n[White]" {
+  [Scope / WBS / Activities / Duration]
+  [Resources Management]
+  [Constraint Manager]
+  [Delay Analyser] #tomato
+  [Change Manager / Audit Trail] #pink
+  [Access & Permission Manager]
+  [Workflow Orchestrator] #lightyellow
+  [Schedule Engine] #gold
+}
+
+package "AI & Analytics\n[White]" {
+  [AI Trainer\n(Learn from Outcomes)] #aliceblue
+  [Gen AI\n(Planning Assistant)] #green
+  [AI Prediction Model\n(Run-time)] #lightblue
+  [Schedule Quality Checker\n(DCMA 14-Point)] #orangered
+}
+
+[User Interface\nGanttChart\nTaskTable\nDashboard] as UI #lightblue
+[ProgressTracker]
+[Database] <<database>> #silver
+[ERP / HRMS] #wheat
+[Primavera / MSP] #wheat
+[BIM / 4D Integrator] #wheat
+actor User
+
+' Arrows & flows
+User --> UI
+UI --> [Change Manager / Audit Trail]
+UI --> [Workflow Orchestrator]
+UI --> [Scope / WBS / Activities / Duration]
+
+[BIM / 4D Integrator] --> [Scope / WBS / Activities / Duration]
+
+[Workflow Orchestrator] --> [Schedule Engine]
+[Workflow Orchestrator] --> [Delay Analyser]
+[Workflow Orchestrator] --> [Constraint Manager]
+[Workflow Orchestrator] --> [Resources Management]
+[Workflow Orchestrator] --> [Schedule Quality Checker\n(DCMA 14-Point)]
+
+[Change Manager / Audit Trail] --> [Workflow Orchestrator]
+[Resources Management] --> [Workflow Orchestrator]
+[Constraint Manager] --> [Workflow Orchestrator]
+[Delay Analyser] --> [Workflow Orchestrator]
+[Scope / WBS / Activities / Duration] --> [Workflow Orchestrator]
+
+[Workflow Orchestrator] --> [Schedule Engine]
+[Schedule Engine] --> Database
+[Schedule Engine] --> [ERP / HRMS]
+[Schedule Engine] --> [Primavera / MSP]
+
+[Schedule Engine] --> ProgressTracker
+
+[Schedule Quality Checker\n(DCMA 14-Point)] --> [Gen AI\n(Planning Assistant)]
+[Gen AI\n(Planning Assistant)] --> [AI Prediction Model\n(Run-time)]
+[AI Trainer\n(Learn from Outcomes)] --> [Gen AI\n(Planning Assistant)]
+[AI Trainer\n(Learn from Outcomes)] --> [AI Prediction Model\n(Run-time)]
+
+@enduml

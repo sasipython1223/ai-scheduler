@@ -1,0 +1,22 @@
+{
+  "devDependencies": {
+    "eslint-plugin-vitest": "^0.5.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2"
+  },
+  "scripts": {
+    "prepare": "husky",
+    "check:github": "node .copilot/github-status-check.js",
+    "check:github:quick": "node .copilot/github-status-check.js --quick"
+  },
+  "lint-staged": {
+    "frontend/src/**/*.{ts,tsx}": [
+      "npm --prefix frontend run lint:fix",
+      "npm --prefix frontend run format"
+    ],
+    "backend/src/**/*.ts": [
+      "npm --prefix backend run lint:fix", 
+      "npm --prefix backend run format"
+    ]
+  }
+}

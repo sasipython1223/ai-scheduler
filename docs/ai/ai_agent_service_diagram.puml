@@ -1,0 +1,209 @@
+@startuml AI_Agent_Service_Flow_Diagram
+
+title AI Scheduler - Service Architecture Flow
+
+' Define colors for different layers
+!define FRONTEND_COLOR #E3F2FD
+!define API_COLOR #F3E5F5
+!define PROCESSING_COLOR #E8F5E8
+!define STORAGE_COLOR #FFF3E0
+!define EXTERNAL_COLOR #FFEBEE
+
+' Frontend Layer
+package "Frontend Layer" FRONTEND_COLOR {
+  component ReactUI [
+    React UI
+    ----
+    Schedule Interface
+    Task Management
+    Real-time Updates
+    User Feedback
+  ]
+  
+  component WebSocket [
+    WebSocket Client
+    ----
+    Real-time Communication
+    Status Updates
+    Progress Notifications
+  ]
+}
+
+' API Gateway Layer
+package "API Gateway Layer" API_COLOR {
+  component APIGateway [
+    Express.js API
+    ----
+    Authentication
+    Rate Limiting
+    Request Validation
+    Response Formatting
+  ]
+  
+  component AIDispatcher [
+    AI Dispatcher
+    ----
+    Job Routing
+    Priority Management
+    Load Balancing
+    Result Aggregation
+  ]
+}
+
+' Processing Layer
+package "AI Processing Layer" PROCESSING_COLOR {
+  queue BullMQQueue [
+    BullMQ Queue
+    ----
+    Job Management
+    Priority Queuing
+    Retry Logic
+    Dead Letter Queue
+  ]
+  
+  component AIWorker1 [
+    AI Worker 1
+    ----
+    Prompt Processing
+    LLM Integration
+    Result Validation
+    Cache Management
+  ]
+  
+  component AIWorker2 [
+    AI Worker 2
+    ----
+    Prompt Processing
+    LLM Integration
+    Result Validation
+    Cache Management
+  ]
+  
+  component AIWorkerN [
+    AI Worker N
+    ----
+    Auto-scaling
+    Load Distribution
+    Health Monitoring
+  ]
+}
+
+' Storage Layer
+package "Storage Layer" STORAGE_COLOR {
+  database PostgreSQL [
+    PostgreSQL
+    ----
+    Persistent Data
+    User Accounts
+    Schedule History
+    Audit Logs
+  ]
+  
+  database RedisCache [
+    Redis Cache
+    ----
+    Session Storage
+    Result Caching
+    Job Queue Backend
+    Real-time Data
+  ]
+}
+
+' External Services
+package "External Services" EXTERNAL_COLOR {
+  cloud OpenAI [
+    OpenAI API
+    ----
+    GPT-4 Models
+    Text Generation
+    Reasoning Tasks
+    JSON Responses
+  ]
+  
+  cloud LocalLLM [
+    Local LLM
+    ----
+    Llama/Mistral
+    Cost Optimization
+    Data Privacy
+    Offline Capability
+  ]
+}
+
+' Monitoring & Observability
+package "Monitoring" {
+  component Prometheus [
+    Prometheus
+    ----
+    Metrics Collection
+    Alert Management
+    Performance Monitoring
+  ]
+  
+  component Grafana [
+    Grafana
+    ----
+    Dashboards
+    Visualization
+    Real-time Monitoring
+  ]
+}
+
+' Define connections with flow descriptions
+ReactUI --> APIGateway : "HTTP Requests\\n(Schedule Operations)"
+WebSocket --> APIGateway : "WebSocket Connection\\n(Real-time Updates)"
+
+APIGateway --> AIDispatcher : "AI Job Requests\\n(Scheduling Tasks)"
+AIDispatcher --> BullMQQueue : "Enqueue Jobs\\n(Priority Queuing)"
+
+BullMQQueue --> AIWorker1 : "Process Jobs\\n(Parallel Processing)"
+BullMQQueue --> AIWorker2 : "Process Jobs\\n(Load Distribution)"
+BullMQQueue --> AIWorkerN : "Process Jobs\\n(Auto-scaling)"
+
+AIWorker1 --> OpenAI : "LLM Requests\\n(Primary Provider)"
+AIWorker2 --> LocalLLM : "LLM Requests\\n(Fallback/Cost Optimization)"
+
+AIWorker1 --> RedisCache : "Cache Results\\n(Performance Optimization)"
+AIWorker2 --> RedisCache : "Cache Results\\n(Shared Storage)"
+
+APIGateway --> PostgreSQL : "Persistent Data\\n(CRUD Operations)"
+AIDispatcher --> RedisCache : "Job Status\\n(Real-time Updates)"
+
+' Monitoring connections
+APIGateway --> Prometheus : "Metrics Export"
+BullMQQueue --> Prometheus : "Queue Metrics"
+AIWorker1 --> Prometheus : "Worker Metrics"
+Prometheus --> Grafana : "Visualization Data"
+
+' Return flow
+AIWorker1 --> BullMQQueue : "Job Results\\n(Completion Status)"
+BullMQQueue --> AIDispatcher : "Result Notification\\n(Job Complete)"
+AIDispatcher --> APIGateway : "Processed Results\\n(Response Data)"
+APIGateway --> ReactUI : "Schedule Response\\n(JSON/WebSocket)"
+
+' Notes for key architectural patterns
+note top of BullMQQueue
+  Queue Features:
+  Job prioritization
+  Exponential backoff
+  Dead letter handling
+  Rate limiting
+end note
+
+note bottom of AIWorker1
+  Worker Capabilities:
+  Stateless processing
+  Auto-scaling ready
+  Circuit breaker pattern
+  Health check endpoints
+end note
+
+note right of RedisCache
+  Caching Strategy:
+  L1: In-memory worker cache
+  L2: Shared Redis cache
+  L3: PostgreSQL persistence
+  TTL-based invalidation
+end note
+
+@enduml
