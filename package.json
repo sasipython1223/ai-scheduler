@@ -10,13 +10,14 @@
     "check:github:quick": "node .copilot/github-status-check.js --quick"
   },
   "lint-staged": {
-    "frontend/src/**/*.{ts,tsx}": [
-      "npm --prefix frontend run lint:fix",
-      "npm --prefix frontend run format"
+    "*.{ts,tsx,js,json,md}": [
+      "prettier --write"
     ],
     "backend/src/**/*.ts": [
-      "npm --prefix backend run lint:fix", 
-      "npm --prefix backend run format"
+      "eslint --fix"
+    ],
+    "frontend/src/**/*.{ts,tsx}": [
+      "eslint --fix"
     ]
   }
 }
