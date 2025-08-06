@@ -250,6 +250,30 @@ gh auth status
 - 📄 [**Code Quality Setup**](CODE-QUALITY-SETUP.md) - ESLint, Prettier, Husky configuration
 - 📄 [**VS Code Setup**](VS-CODE-SETUP-SUMMARY.md) - Complete workspace configuration
 - 🧠 [**Copilot Guide**](COPILOT-GUIDE.md) - AI-assisted development with GitHub Copilot
+- 📏 [**Clean Code Policy**](docs/clean-code-policy.md) - File size limits & modularization guidelines
+
+#### 📏 Clean Code Enforcement (GitHub Copilot Integration)
+
+**Production Code Files** (`.ts`, `.service.ts`, `.controller.ts`):
+
+- ✅ **Target**: Keep files under **250 lines**
+- ✅ **Acceptable**: Up to **270 lines** if modularity would reduce clarity
+- ⚠️ **Warning**: Never exceed **300 lines** in production code
+- 🚫 **Forbidden**: Deleting comments, JSDoc, or type definitions to reduce size
+- ✅ **Solution**: Modularize into `*.utils.ts`, `*.helpers.ts`, `*.types.ts`
+
+**Test Files** (`.test.ts`, `*-test.ts`):
+
+- ✅ **Flexible**: May exceed 250 lines for comprehensive coverage
+- ✅ **Preserve**: All test descriptions and documentation
+- ✅ **Structure**: Clear category headers and comment dividers
+
+**Current Module 5.4 Status**:
+
+- ⚠️ `FloatCalculator.ts`: 333 lines → **Needs modularization**
+- ⚠️ `CriticalPathAnalyzer.ts`: 318 lines → **Needs modularization**
+- ✅ `Module54Service.ts`: 272 lines → Acceptable
+- ✅ `TaskFlagAssigner.ts`: 270 lines → Acceptable
 
 ## ✅ Setup Checklist
 

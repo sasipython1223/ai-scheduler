@@ -1,0 +1,128 @@
+"use strict";
+/**
+ * Module 5.4 - Float Utilities
+ * Purpose: Reusable float calculation utilities with epsilon precision
+ * Requirements:
+ * - Use epsilon-based float comparison (0.001)
+ * - Pure functions for testability
+ * - Maintain clean separation of concerns
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.DEFAULT_EPSILON = void 0;
+exports.isFloatEqual = isFloatEqual;
+exports.isFloatZero = isFloatZero;
+exports.roundFloat = roundFloat;
+exports.validateFloatRelationship = validateFloatRelationship;
+exports.getMinFloat = getMinFloat;
+exports.getMaxFloat = getMaxFloat;
+exports.getAverageFloat = getAverageFloat;
+exports.workingDaysToCalendarDays = workingDaysToCalendarDays;
+exports.isFloatWithinBounds = isFloatWithinBounds;
+exports.getFloatRiskLevel = getFloatRiskLevel;
+/**
+ * Default epsilon value for float comparisons
+ */
+exports.DEFAULT_EPSILON = 0.001;
+/**
+ * Performs epsilon-based comparison for floating-point numbers
+ * @param value1 First value to compare
+ * @param value2 Second value to compare
+ * @param epsilon Precision threshold (default: 0.001)
+ * @returns True if values are equal within epsilon tolerance
+ */
+function isFloatEqual(value1, value2, epsilon = exports.DEFAULT_EPSILON) {
+    return Math.abs(value1 - value2) < epsilon;
+}
+/**
+ * Checks if a float value is effectively zero using epsilon comparison
+ * @param value Value to check
+ * @param epsilon Precision threshold (default: 0.001)
+ * @returns True if value is zero within epsilon tolerance
+ */
+function isFloatZero(value, epsilon = exports.DEFAULT_EPSILON) {
+    return Math.abs(value) < epsilon;
+}
+/**
+ * Rounds a float value to the specified decimal places
+ * @param value Value to round
+ * @param decimals Number of decimal places (default: 3)
+ * @returns Rounded value
+ */
+function roundFloat(value, decimals = 3) {
+    const factor = Math.pow(10, decimals);
+    return Math.round(value * factor) / factor;
+}
+/**
+ * Validates that free float is less than or equal to total float
+ * @param totalFloat Total float value
+ * @param freeFloat Free float value
+ * @param epsilon Precision threshold (default: 0.001)
+ * @returns True if relationship is valid
+ */
+function validateFloatRelationship(totalFloat, freeFloat, epsilon = exports.DEFAULT_EPSILON) {
+    return freeFloat <= totalFloat + epsilon;
+}
+/**
+ * Calculates the minimum value from an array of numbers
+ * @param values Array of values
+ * @returns Minimum value or 0 if array is empty
+ */
+function getMinFloat(values) {
+    if (values.length === 0)
+        return 0;
+    return Math.min(...values);
+}
+/**
+ * Calculates the maximum value from an array of numbers
+ * @param values Array of values
+ * @returns Maximum value or 0 if array is empty
+ */
+function getMaxFloat(values) {
+    if (values.length === 0)
+        return 0;
+    return Math.max(...values);
+}
+/**
+ * Calculates the average of an array of numbers
+ * @param values Array of values
+ * @returns Average value or 0 if array is empty
+ */
+function getAverageFloat(values) {
+    if (values.length === 0)
+        return 0;
+    return values.reduce((sum, val) => sum + val, 0) / values.length;
+}
+/**
+ * Converts working days to calendar days based on a simple 5-day work week
+ * @param workingDays Number of working days
+ * @returns Equivalent calendar days
+ */
+function workingDaysToCalendarDays(workingDays) {
+    // Simple conversion: 5 working days = 7 calendar days
+    return Math.ceil((workingDays * 7) / 5);
+}
+/**
+ * Validates that a float value is within acceptable bounds
+ * @param value Float value to validate
+ * @param minValue Minimum acceptable value (default: -1000)
+ * @param maxValue Maximum acceptable value (default: 1000)
+ * @returns True if value is within bounds
+ */
+function isFloatWithinBounds(value, minValue = -1000, maxValue = 1000) {
+    return (value >= minValue && value <= maxValue && !isNaN(value) && isFinite(value));
+}
+/**
+ * Determines risk level based on float value
+ * @param totalFloat Total float value
+ * @param thresholds Risk level thresholds
+ * @returns Risk level classification
+ */
+function getFloatRiskLevel(totalFloat, thresholds = { critical: 1, high: 3, medium: 7 }) {
+    if (totalFloat <= thresholds.critical)
+        return 'CRITICAL';
+    if (totalFloat <= thresholds.high)
+        return 'HIGH';
+    if (totalFloat <= thresholds.medium)
+        return 'MEDIUM';
+    return 'LOW';
+}

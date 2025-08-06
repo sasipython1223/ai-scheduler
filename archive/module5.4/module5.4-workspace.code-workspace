@@ -1,0 +1,112 @@
+{
+  "folders": [
+    {
+      "name": "AI Scheduler - Module 5.4",
+      "path": "../.."
+    }
+  ],
+  "settings": {
+    "typescript.preferences.quoteStyle": "single",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    },
+    "eslint.workingDirectories": ["backend"],
+    "typescript.preferences.includePackageJsonAutoImports": "auto",
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/coverage": true,
+      "**/temp": true,
+      "**/.git": false
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/coverage": true,
+      "**/temp": true
+    },
+    "jest.jestCommandLine": "npm test --",
+    "jest.rootPath": "backend",
+    "jest.runMode": "on-demand"
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-vscode.vscode-typescript-next",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode",
+      "ms-vscode.vscode-jest",
+      "bradlc.vscode-tailwindcss",
+      "formulahendry.auto-rename-tag"
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Run Module 5.4 Tests",
+        "type": "shell",
+        "command": "npm",
+        "args": ["test", "--", "--testPathPattern=module5.4"],
+        "group": "test",
+        "options": {
+          "cwd": "${workspaceFolder}/backend"
+        },
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        },
+        "problemMatcher": ["$tsc"]
+      },
+      {
+        "label": "Run Module 5.4 Coverage",
+        "type": "shell",
+        "command": "npm",
+        "args": ["test", "--", "--testPathPattern=module5.4", "--coverage"],
+        "group": "test",
+        "options": {
+          "cwd": "${workspaceFolder}/backend"
+        },
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        }
+      },
+      {
+        "label": "ESLint Module 5.4",
+        "type": "shell",
+        "command": "npx",
+        "args": ["eslint", "src/services/module5.4/"],
+        "group": "build",
+        "options": {
+          "cwd": "${workspaceFolder}/backend"
+        },
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        },
+        "problemMatcher": ["$eslint-stylish"]
+      }
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Run Module 5.4 Tests",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/backend/node_modules/.bin/jest",
+        "args": ["--testPathPattern=module5.4", "--runInBand"],
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "cwd": "${workspaceFolder}/backend"
+      }
+    ]
+  }
+}

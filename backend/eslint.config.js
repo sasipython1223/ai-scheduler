@@ -36,10 +36,30 @@ export default [
           argsIgnorePattern: '^_',
         },
       ],
+      // 📏 Clean Code Policy - File Size Limits
       'max-lines': [
         'warn',
-        { max: 250, skipBlankLines: true, skipComments: true },
+        {
+          max: 250,
+          skipBlankLines: true,
+          skipComments: true,
+        },
       ],
+      // 📏 Function Complexity Limits
+      'max-lines-per-function': [
+        'warn',
+        {
+          max: 50,
+          skipBlankLines: true,
+          skipComments: true,
+        },
+      ],
+      // 📏 Cyclomatic Complexity - Increased for clean branching
+      complexity: ['warn', { max: 12 }],
+      // 📏 Nesting Depth
+      'max-depth': ['warn', { max: 4 }],
+      // 📏 Parameter Count
+      'max-params': ['warn', { max: 5 }],
       'no-console': 'off', // Allow console in backend
     },
   },
@@ -48,6 +68,11 @@ export default [
       '**/*.test.{ts,js}',
       '**/tests/**/*.{ts,js}',
       '**/fixtures/**/*.{ts,js}',
+      '**/*-test.{ts,js}',
+      '**/test-*.{ts,js}',
+      '**/*-runner.{ts,js}', // Include test runners
+      '**/extended-*.{ts,js}', // Include extended test files
+      '**/comprehensive-*.{ts,js}', // Include comprehensive test files
     ],
     languageOptions: {
       parser: tsParser,
@@ -77,7 +102,7 @@ export default [
       ...js.configs.recommended.rules,
       ...tseslint.configs.recommended.rules,
       'unused-imports/no-unused-imports': 'warn',
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn', // Relaxed for test files
       '@typescript-eslint/no-unused-vars': 'off',
       'unused-imports/no-unused-vars': [
         'warn',
@@ -88,7 +113,25 @@ export default [
           argsIgnorePattern: '^_',
         },
       ],
-      'max-lines': 'off', // Tests can be longer for comprehensive coverage
+      // 📏 Relaxed limits for test files
+      'max-lines': [
+        'warn',
+        {
+          max: 400, // Allow longer test files for comprehensive coverage
+          skipBlankLines: true,
+          skipComments: true,
+        },
+      ],
+      'max-lines-per-function': [
+        'warn',
+        {
+          max: 75, // Increased limit for test functions
+          skipBlankLines: true,
+          skipComments: true,
+        },
+      ],
+      complexity: ['warn', { max: 15 }], // Higher complexity for test scenarios
+      'max-depth': ['warn', { max: 5 }], // Slightly deeper nesting for test setups
       'no-console': 'off',
     },
   },

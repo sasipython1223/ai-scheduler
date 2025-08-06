@@ -1,0 +1,207 @@
+{
+  "moduleVersion": "5.4.0",
+  "timestamp": "2025-08-06T00:00:00Z",
+  "sampleFloatAnalysisResult": {
+    "success": true,
+    "tasksWithFlags": [
+      {
+        "id": "T1",
+        "name": "Design Phase",
+        "duration": 5,
+        "totalFloat": 0,
+        "freeFloat": 0,
+        "independentFloat": 0,
+        "isCritical": true,
+        "floatRank": 1,
+        "riskLevel": "HIGH",
+        "flags": [
+          {
+            "id": "F1",
+            "type": "CRITICAL",
+            "taskId": "T1",
+            "description": "Critical path task - no scheduling flexibility",
+            "severity": "WARNING",
+            "metadata": {
+              "floatValue": 0,
+              "pathPosition": "start"
+            },
+            "createdAt": "2025-08-06T00:00:00Z"
+          }
+        ],
+        "earlyStart": "2024-01-01T00:00:00Z",
+        "earlyFinish": "2024-01-06T00:00:00Z",
+        "lateStart": "2024-01-01T00:00:00Z",
+        "lateFinish": "2024-01-06T00:00:00Z"
+      },
+      {
+        "id": "T2",
+        "name": "Development Phase",
+        "duration": 10,
+        "totalFloat": 2,
+        "freeFloat": 1,
+        "independentFloat": 0,
+        "isCritical": false,
+        "floatRank": 2,
+        "riskLevel": "MEDIUM",
+        "flags": [
+          {
+            "id": "F2",
+            "type": "NEAR_CRITICAL",
+            "taskId": "T2",
+            "description": "Task has limited scheduling flexibility",
+            "severity": "INFO",
+            "metadata": {
+              "floatValue": 2,
+              "criticalityScore": 0.8
+            },
+            "createdAt": "2025-08-06T00:00:00Z"
+          }
+        ],
+        "earlyStart": "2024-01-07T00:00:00Z",
+        "earlyFinish": "2024-01-17T00:00:00Z",
+        "lateStart": "2024-01-09T00:00:00Z",
+        "lateFinish": "2024-01-19T00:00:00Z"
+      },
+      {
+        "id": "T3",
+        "name": "Testing Phase",
+        "duration": 7,
+        "totalFloat": 5,
+        "freeFloat": 3,
+        "independentFloat": 1,
+        "isCritical": false,
+        "floatRank": 3,
+        "riskLevel": "LOW",
+        "flags": [
+          {
+            "id": "F3",
+            "type": "HIGH_FLOAT",
+            "taskId": "T3",
+            "description": "Task has significant scheduling flexibility",
+            "severity": "INFO",
+            "metadata": {
+              "floatValue": 5,
+              "flexibilityScore": 0.3
+            },
+            "createdAt": "2025-08-06T00:00:00Z"
+          }
+        ],
+        "earlyStart": "2024-01-18T00:00:00Z",
+        "earlyFinish": "2024-01-25T00:00:00Z",
+        "lateStart": "2024-01-23T00:00:00Z",
+        "lateFinish": "2024-01-30T00:00:00Z"
+      }
+    ],
+    "criticalPathAnalysis": {
+      "criticalPaths": [
+        {
+          "id": "PATH1",
+          "tasks": ["T1"],
+          "totalDuration": 5,
+          "startDate": "2024-01-01T00:00:00Z",
+          "endDate": "2024-01-06T00:00:00Z",
+          "pathLength": 1,
+          "isLongest": true,
+          "riskLevel": "HIGH"
+        }
+      ],
+      "totalCriticalTasks": 1,
+      "longestPath": {
+        "id": "PATH1",
+        "tasks": ["T1"],
+        "totalDuration": 5,
+        "startDate": "2024-01-01T00:00:00Z",
+        "endDate": "2024-01-06T00:00:00Z",
+        "pathLength": 1,
+        "isLongest": true,
+        "riskLevel": "HIGH"
+      },
+      "shortestCriticalPath": {
+        "id": "PATH1",
+        "tasks": ["T1"],
+        "totalDuration": 5,
+        "startDate": "2024-01-01T00:00:00Z",
+        "endDate": "2024-01-06T00:00:00Z",
+        "pathLength": 1,
+        "isLongest": true,
+        "riskLevel": "HIGH"
+      },
+      "pathIntersections": [],
+      "criticalityMetrics": {
+        "totalCriticalPaths": 1,
+        "averagePathLength": 1,
+        "criticalPathDensity": 0.33,
+        "pathComplexityScore": 0.2
+      }
+    },
+    "floatAnalysis": {
+      "totalFloatDistribution": {
+        "zero": 1,
+        "low": 1,
+        "medium": 0,
+        "high": 1,
+        "averageFloat": 2.33,
+        "maxFloat": 5,
+        "minFloat": 0
+      },
+      "freeFloatDistribution": {
+        "zero": 1,
+        "low": 2,
+        "medium": 0,
+        "high": 0,
+        "averageFloat": 1.33,
+        "maxFloat": 3,
+        "minFloat": 0
+      },
+      "nearCriticalTasks": ["T2"],
+      "floatBufferAnalysis": {
+        "totalAvailableFloat": 7,
+        "averageFloatPerTask": 2.33,
+        "criticalPathBuffer": 0,
+        "riskMitigationCapacity": 0.6
+      },
+      "riskAssessment": {
+        "highRiskTasks": ["T1"],
+        "mediumRiskTasks": ["T2"],
+        "lowRiskTasks": ["T3"],
+        "overallRiskLevel": "MEDIUM"
+      }
+    },
+    "performanceMetrics": {
+      "executionTime": 15.2,
+      "memoryUsage": 0,
+      "tasksProcessed": 3,
+      "algorithmComplexity": "O(V + E)"
+    },
+    "qualityMetrics": {
+      "floatConsistencyScore": 0.95,
+      "criticalPathValidityScore": 1.0,
+      "dataIntegrityScore": 0.98,
+      "overallQualityScore": 0.97
+    },
+    "processingTime": 15.2,
+    "errors": [],
+    "warnings": []
+  },
+  "testMetrics": {
+    "totalTests": 20,
+    "passedTests": 20,
+    "failedTests": 0,
+    "passRate": "100%",
+    "coverage": {
+      "statements": "59.51%",
+      "branches": "48.78%",
+      "functions": "68.46%",
+      "lines": "59.33%"
+    },
+    "executionTime": "1.7s"
+  },
+  "codeQualityMetrics": {
+    "eslintWarnings": 4,
+    "eslintErrors": 0,
+    "typescriptErrors": 0,
+    "complexityReduction": "75%",
+    "modularity": "8 utility modules extracted",
+    "maintainabilityIndex": "High"
+  }
+}

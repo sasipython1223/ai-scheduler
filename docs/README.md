@@ -16,6 +16,20 @@ Welcome to the comprehensive documentation for the AI Scheduler project. This di
 - 📄 [**Test Report**](module-5.2-tests.md) - Comprehensive test coverage and validation
 - 🎯 **Status**: Complete - Critical Path Method forward pass algorithm
 
+### **Module 5.3: CPM Backward Pass Logic** ✅
+
+- 📄 [**Backward Pass Implementation**](module-5.3-backward-pass.md) - Complete backward pass algorithm
+- 📄 [**Completion Summary**](module-5.3-completion-summary.md) - Implementation achievements and test results
+- 🎯 **Status**: Complete - Backward pass with 20/20 tests passing, production ready
+
+### **Module 5.4: Float Calculation & Critical Path Analysis** ✅
+
+- 📄 [**Module Overview**](module5.4/README.md) - Comprehensive float calculation and critical path analysis
+- 📄 [**Changelog**](module5.4/CHANGELOG.md) - Development history and achievements
+- 📄 [**Test Coverage Report**](module5.4/module5.4-coverage.md) - Detailed coverage analysis (100% pass rate)
+- 📄 [**Clean Architecture Design**](module5.4/module5.4-design.md) - Design principles and architecture decisions
+- 🎯 **Status**: Complete - Float calculations, critical path analysis, and task flagging system
+
 ## 🏗️ **Architecture Documentation**
 
 ### **System Architecture**
@@ -54,11 +68,13 @@ Welcome to the comprehensive documentation for the AI Scheduler project. This di
 
 ### **Current Status**
 
-- **Phase 1**: Foundation (90% Complete) ✅
+- **Phase 1**: Foundation (95% Complete) ✅
   - ✅ Module 5.1: Data Models
   - ✅ Module 5.2: Forward Pass Logic
+  - ✅ Module 5.3: Backward Pass Logic
+  - ✅ Module 5.4: Float Calculation & Critical Path Analysis
   - 🔄 Module 7: Redis + BullMQ Integration
-- **Phase 2**: Engine Development (Planned)
+- **Phase 2**: Engine Development (Ready to Begin)
 - **Phase 3**: AI Integration (Planned)
 - **Phase 4**: Production Readiness (Planned)
 
@@ -69,7 +85,7 @@ Welcome to the comprehensive documentation for the AI Scheduler project. This di
 | **5.1** | Schedule Data Models   | ✅ Complete    | [Implementation](Module-5.1-Implementation.md)                                                            |
 | **5.2** | CPM Forward Pass       | ✅ Complete    | [Summary](module-5.2-summary.md), [Tests](module-5.2-tests.md), [Plan](module-5.2-implementation-plan.md) |
 | **5.3** | CPM Backward Pass      | ✅ Complete    | [Complete Implementation](module-5.3-backward-pass.md) - 20/20 tests passing, production ready            |
-| **5.4** | Critical Path Analysis | 📋 Planned     | TBD                                                                                                       |
+| **5.4** | Float Calculation & Critical Path | ✅ Complete | [Overview](module5.4/README.md), [Coverage](module5.4/module5.4-coverage.md), [Design](module5.4/module5.4-design.md) - 100% test pass rate, clean code compliant |
 | **5.5** | Resource Leveling      | 📋 Planned     | TBD                                                                                                       |
 | **7.0** | Redis + BullMQ         | 🔄 In Progress | TBD                                                                                                       |
 
