@@ -1,0 +1,53 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.validate": ["typescript", "javascript", "typescriptreact"],
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+
+  // AI Scheduler specific settings
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.autoImports": true,
+
+  // Exclude build artifacts and dependencies from search
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/.next": true,
+    "**/.vite": true
+  },
+
+  // Hide generated files from explorer
+  "files.exclude": {
+    "**/node_modules": false,
+    "**/dist": true,
+    "**/.vite": true,
+    "**/*.tsbuildinfo": true
+  },
+
+  // Tailwind CSS support
+  "tailwindCSS.includeLanguages": {
+    "typescript": "typescript",
+    "typescriptreact": "typescriptreact"
+  },
+
+  // PlantUML configuration
+  "plantuml.server": "https://www.plantuml.com/plantuml",
+  "plantuml.render": "PlantUMLServer",
+  "plantuml.previewAutoUpdate": true,
+  "plantuml.exportFormat": "svg",
+  "plantuml.exportSubFolder": false,
+
+  // Recommended extensions for this workspace
+  "extensions.recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next",
+    "jebbs.plantuml"
+  ]
+}

@@ -1,0 +1,52 @@
+@startuml "Workflow Orchestrator Architecture"
+title Workflow Orchestrator Architecture
+
+package "Core Scheduling System" {
+  [Workflow Orchestrator] as Orchestrator #lemonchiffon
+
+  [Resources Management] as Resources #mistyrose
+  [Constraint Manager] as Constraint #thistle
+  [Delay Analyser] as Delay #tomato
+  [Progress Tracker] as Progress #honeydew
+  [Change Manager / Audit Trail] as ChangeMgr #lightpink
+  [Scope / WBS / Activities / Duration] as ScopeMgr #wheat
+
+  [Schedule Engine] as Scheduler #gold
+}
+
+package "AI & Analytics" {
+  [Gen AI\n(Planning Assistant)] as GenAI #mediumseagreen
+  [AI Prediction Model\n(Run-time)] as AIPredict #cadetblue
+  [Schedule Quality Checker\n(DCMA 14-Point)] as QualityChecker #salmon
+}
+
+package "External Systems" {
+  [ERP / HRMS] as ERP #beige
+  [Primavera / MSP] as Primavera #beige
+  [BIM / 4D Integrator] as BIM #tan
+  [Database] as DB #silver
+}
+
+actor "User"
+actor "ProgressTracker"
+
+User --> Orchestrator : Initiates Schedule Request
+GenAI --> Orchestrator : AI Suggestions / Generated Tasks
+Resources --> Orchestrator
+Constraint --> Orchestrator
+Delay --> Orchestrator
+Progress --> Orchestrator
+ChangeMgr --> Orchestrator
+ScopeMgr --> Orchestrator
+
+Orchestrator --> Scheduler : Finalized Task Sequence
+Scheduler --> DB
+Scheduler --> Primavera
+Scheduler --> ERP
+Scheduler --> BIM
+
+Orchestrator --> QualityChecker : Send for DCMA Checks
+Orchestrator --> GenAI : Feedback / Optimizations
+Orchestrator --> AIPredict : Runtime Adjustments
+
+@enduml
