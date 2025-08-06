@@ -1,6 +1,5 @@
 @startuml CPM-Engine-Complete-Architecture
 !theme cerulean-outline
-!allowmixing
 title AI Scheduler: Complete CPM Engine Architecture (Modules 5.1-5.4)
 
 package "Module 5.1: Schedule Data Models" as M51 {
@@ -99,21 +98,21 @@ package "Integration Layer" as IL {
 }
 
 package "External Interfaces" as EI {
-  interface "UI Components" as UI {
+  interface UIComponents {
     Gantt Charts
     Critical Path View
     Float Analysis
     Task Properties
   }
   
-  interface "AI Services" as AI {
+  interface AIServices {
     Schedule Optimization
     Risk Analysis
     Resource Allocation
     Intelligent Suggestions
   }
   
-  interface "Database" as DB {
+  interface Database {
     Task Persistence
     Project Storage
     Calendar Management
@@ -121,33 +120,24 @@ package "External Interfaces" as EI {
   }
 }
 
-' Data Flow Sequence
-actor "Project Manager" as PM
-participant "ScheduleEngine" as SE
-participant "CPMOrchestrator" as CO
-participant "ForwardPassEngine" as FPE
-participant "BackwardPassEngine" as BPE
-participant "Module54Service" as M54S
+' Module Relationships and Data Flow
+M51 ||--|| M52 : "provides data models"
+M52 ||--|| M53 : "early dates → late dates"
+M53 ||--|| M54 : "basic float → enhanced flags"
 
-PM -> SE : createProject(tasks, dependencies)
-SE -> CO : executeCompleteCPM()
-activate CO
+ScheduleEngine ||--o{ ForwardPassEngine : "orchestrates"
+ScheduleEngine ||--o{ BackwardPassEngine : "orchestrates"
 
-CO -> FPE : executeForwardPass()
-FPE --> CO : ForwardPassResult
-note right: Tasks with early dates
+ForwardPassEngine ..> ForwardPassResult : "produces"
+BackwardPassEngine ..> BackwardPassResult : "produces"
+TaskFlagAssigner ..> Module54Result : "produces"
 
-CO -> BPE : executeBackwardPass(forwardResult)
-BPE --> CO : BackwardPassResult
-note right: Tasks with late dates & basic float
+CPMOrchestrator ||--|| ScheduleEngine : "coordinates"
+CPMOrchestrator ||--o{ ResultValidator : "uses"
 
-CO -> M54S : enhanceWithFlags(backwardResult)
-M54S --> CO : Module54Result
-note right: Tasks with precise flags
-
-CO --> SE : CompleteScheduleResult
-SE --> PM : EnhancedProject
-deactivate CO
+Module54Result ..> UIComponents : "feeds"
+Module54Result ..> AIServices : "feeds"
+ScheduleEngine ..> Database : "persists to"
 
 ' Module Relationships
 M51 ||--|| M52 : "provides data models"

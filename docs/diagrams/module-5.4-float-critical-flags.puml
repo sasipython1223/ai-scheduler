@@ -1,6 +1,5 @@
-@startuml Module-5.4-Float-Critical-Flags
+@startuml Module54FloatCriticalFlags
 !theme cerulean-outline
-!allowmixing
 title Module 5.4: Calculate Float & Critical Path Flags Architecture
 
 package "Float & Critical Path Analysis Engine" as FCPE {
@@ -180,44 +179,6 @@ package "Float & Critical Path Analysis Engine" as FCPE {
     }
   }
 }
-
-' Process Flow Sequence
-actor "Schedule Engine" as SE
-participant "Module54Service" as M54S
-participant "FloatCalculator" as FC
-participant "CriticalPathAnalyzer" as CPA
-participant "TaskFlagAssigner" as TFA
-participant "ResultAggregator" as RA
-
-SE -> M54S : executeCompleteAnalysis(input)
-activate M54S
-
-M54S -> M54S : validateInputData(input)
-
-par Float Calculation
-  M54S -> FC : calculateBatchFloat(tasks)
-  FC -> FC : calculateTotalFloat(task)
-  FC -> FC : calculateFreeFloat(task, successors)
-  FC --> M54S : FloatData[]
-and Critical Path Analysis
-  M54S -> CPA : identifyCriticalTasks(tasks)
-  CPA -> CPA : isCritical(task, epsilon)
-  CPA -> CPA : buildCriticalPathSequences(tasks, deps)
-  CPA --> M54S : CriticalData[]
-end
-
-M54S -> TFA : assignFloatFlags(tasks, floatData)
-TFA -> TFA : performBatchFlagAssignment(taskBatches)
-TFA --> M54S : FlagAssignmentResult
-
-M54S -> TFA : assignCriticalFlags(tasks, criticalData)
-TFA --> M54S : FlagAssignmentResult
-
-M54S -> RA : combineModuleResults(floatResult, criticalResult)
-RA --> M54S : Module54Result
-
-M54S --> SE : Module54Result
-deactivate M54S
 
 ' Relationships
 FloatCalculator ||--o{ PrecisionManager : "uses"

@@ -1,6 +1,5 @@
-@startuml Module-5.2-CPM-Forward-Pass
+@startuml Module52ForwardPass
 !theme cerulean-outline
-!allowmixing
 title Module 5.2: CPM Forward Pass Architecture & Data Flow
 
 package "CPM Forward Pass Engine" as FP {
@@ -144,40 +143,6 @@ package "Integration Points" as Integration {
     +validateCalendar(calendarId: string): ValidationResult
   }
 }
-
-' Data Flow Sequence
-actor "Schedule Engine" as SE
-participant "CPMForwardPassService" as FPS
-participant "ForwardPassEngine" as FPE
-participant "CPMDateCalculator" as CDC
-participant "WorkingDaysCalculator" as WDC
-participant "GraphUtils" as GU
-
-SE -> FPS : executeForwardPass(inputData)
-activate FPS
-
-FPS -> FPS : validateInputData()
-FPS -> FPE : execute()
-activate FPE
-
-FPE -> GU : topologicalSort(tasks, dependencies)
-GU --> FPE : sortedTasks[]
-
-loop for each task in topological order
-  FPE -> CDC : calculateEarlyStart(task, predecessors)
-  CDC -> WDC : addWorkingDays(baseDate, duration)
-  WDC --> CDC : calculatedDate
-  CDC --> FPE : earlyStart
-  
-  FPE -> CDC : calculateEarlyFinish(task)
-  CDC --> FPE : earlyFinish
-end
-
-FPE --> FPS : ForwardPassResult
-deactivate FPE
-
-FPS --> SE : ForwardPassResult
-deactivate FPS
 
 ' Relationships
 ForwardPassEngine ||--o{ CPMDateCalculator : "uses"

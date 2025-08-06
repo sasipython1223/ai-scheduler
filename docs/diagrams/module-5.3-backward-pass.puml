@@ -1,6 +1,5 @@
-@startuml Module-5.3-CPM-Backward-Pass
+@startuml Module53BackwardPass
 !theme cerulean-outline
-!allowmixing
 title Module 5.3: CPM Backward Pass Architecture & Data Flow
 
 package "CPM Backward Pass Engine" as BP {
@@ -140,57 +139,6 @@ package "Integration with Forward Pass" as Integration {
     +validateTaskNetwork(tasks: Task[]): ValidationResult
   }
 }
-
-' Algorithm Flow Sequence
-actor "Schedule Engine" as SE
-participant "CPMBackwardPassService" as BPS
-participant "BackwardPassEngine" as BPE
-participant "FloatCalculator" as FC
-participant "CriticalPathIdentifier" as CPI
-participant "IterationManager" as IM
-
-SE -> BPS : executeBackwardPass(forwardPassResult)
-activate BPS
-
-BPS -> BPS : validateForwardPassInput()
-BPS -> BPE : execute()
-activate BPE
-
-BPE -> IM : shouldContinueIterating()
-IM --> BPE : true
-
-loop while not converged and < maxIterations
-  BPE -> BPE : processTasksReverseTopological()
-  
-  loop for each task in reverse topological order
-    BPE -> BPE : calculateLateDates(task)
-    note right: Calculate late start/finish based on successors
-  end
-  
-  BPE -> IM : trackChanges(previousTasks, currentTasks)
-  IM --> BPE : changeMetrics
-  
-  BPE -> IM : detectConvergence(changeMetrics)
-  IM --> BPE : converged
-end
-
-BPE -> FC : calculateTotalFloat(tasks)
-FC --> BPE : totalFloatMap
-
-BPE -> FC : calculateFreeFloat(tasks)
-FC --> BPE : freeFloatMap
-
-BPE -> CPI : identifyCriticalTasks(tasks)
-CPI --> BPE : criticalTasks
-
-BPE -> CPI : buildCriticalPath(criticalTasks)
-CPI --> BPE : criticalPath
-
-BPE --> BPS : BackwardPassResult
-deactivate BPE
-
-BPS --> SE : BackwardPassResult
-deactivate BPS
 
 ' Relationships
 BackwardPassEngine ||--o{ FloatCalculator : "uses"
