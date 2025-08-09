@@ -1,0 +1,24 @@
+@startuml Module7.4-ContingencyPlanner
+title 7.4.2 Contingency Planning Flow
+
+actor Client
+participant "ContingencyPlanner" as CP
+participant "ScenarioGenerator" as SG
+participant "AlternativeScheduler" as AS
+participant "ResilienceAnalyzer" as RA
+
+Client -> CP: generateContingencyPlans(schedule)
+CP -> SG: generate(schedule, seed, max)
+SG --> CP: scenarios[]
+loop for each scenario
+  CP -> AS: generateAlternatives(base, scenario, k)
+  AS --> CP: altSchedules[]
+  loop for each alt
+    CP -> AS: validatePlan(plan)
+    AS --> CP: feasibility(score, violations)
+    CP -> RA: analyzeScheduleResilience(alt)
+    RA --> CP: metrics(overallScore)
+  end
+end
+CP --> Client: ranked viable plans
+@enduml
