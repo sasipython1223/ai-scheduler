@@ -1,0 +1,33 @@
+@startuml Module7.4-RiskCycle
+title 7.4.3 Risk Cycle Flow
+
+actor Client
+participant "RiskManager" as RM
+participant "RiskMonitor" as MON
+participant "ContingencyPlanner" as CP
+participant "Strategy Registry" as REG
+
+Client -> RM: runCycle(schedule)
+RM -> MON: assess(schedule)
+MON --> RM: indicators[sorted by severity]
+
+loop for each indicator (until budget/N exhausted)
+  RM -> REG: selectStrategy(indicator.metric, whitelist)
+  REG --> RM: bestStrategy | none
+  alt found
+    RM -> bestStrategy: apply({schedule, indicator, budget})
+    bestStrategy --> RM: MitigationResult(newSchedule, metricsDelta)
+    RM -> RM: estimateImprovement(ind, result)
+    alt improvement >= minGain
+      RM -> RM: accept result (update schedule)
+    else no sufficient gain
+      RM -> CP: generateContingencyPlans(schedule)
+      CP --> RM: rankedPlans[]
+      RM -> RM: (optional) record fallback suggestion
+    end
+  else none
+    RM -> RM: skip indicator (reason=no-strategy)
+  end
+end
+RM --> Client: RiskCycleResult(applied, skipped, schedule)
+@enduml
