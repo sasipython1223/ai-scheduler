@@ -1,26 +1,26 @@
 /**
  * Module 7.4 - Scenario Utilities
- * 
+ *
  * Purpose: Utility functions for scenario generation and modeling
- * 
+ *
  * @author AI Scheduler Development Team
  * @version 1.0.0
  */
 
 import type {
-  Schedule,
   ContingencyScenario,
-  ScenarioTrigger,
+  RiskImpact,
   ScenarioCategory,
-  RiskImpact
-} from '../shared-types';
+  ScenarioTrigger,
+  Schedule,
+} from "../shared-types";
 
 /**
  * Generate scenarios based on schedule analysis
  */
 export async function generateScenarios(
   schedule: Schedule,
-  scenarioTypes?: ScenarioCategory[]
+  scenarioTypes?: ScenarioCategory[],
 ): Promise<ContingencyScenario[]> {
   // TODO: Implement scenario generation
   // - Analyze schedule vulnerabilities
@@ -28,15 +28,15 @@ export async function generateScenarios(
   // - Calculate scenario probabilities
   // - Assess potential impacts
   // - Return generated scenarios
-  
-  throw new Error('generateScenarios not yet implemented');
+
+  throw new Error("generateScenarios not yet implemented");
 }
 
 /**
  * Generate resource shortage scenarios
  */
 export async function generateResourceShortageScenarios(
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<ContingencyScenario[]> {
   // TODO: Implement resource shortage scenario generation
   // - Identify critical resources
@@ -44,15 +44,15 @@ export async function generateResourceShortageScenarios(
   // - Calculate impact on dependent tasks
   // - Estimate scenario probability
   // - Return resource shortage scenarios
-  
-  throw new Error('generateResourceShortageScenarios not yet implemented');
+
+  throw new Error("generateResourceShortageScenarios not yet implemented");
 }
 
 /**
  * Generate timeline pressure scenarios
  */
 export async function generateTimelinePressureScenarios(
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<ContingencyScenario[]> {
   // TODO: Implement timeline pressure scenario generation
   // - Identify critical deadlines
@@ -60,15 +60,15 @@ export async function generateTimelinePressureScenarios(
   // - Calculate cascading effects
   // - Assess delay probability
   // - Return timeline pressure scenarios
-  
-  throw new Error('generateTimelinePressureScenarios not yet implemented');
+
+  throw new Error("generateTimelinePressureScenarios not yet implemented");
 }
 
 /**
  * Generate scope change scenarios
  */
 export async function generateScopeChangeScenarios(
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<ContingencyScenario[]> {
   // TODO: Implement scope change scenario generation
   // - Model requirement changes
@@ -76,15 +76,15 @@ export async function generateScopeChangeScenarios(
   // - Calculate timeline effects
   // - Assess change probability
   // - Return scope change scenarios
-  
-  throw new Error('generateScopeChangeScenarios not yet implemented');
+
+  throw new Error("generateScopeChangeScenarios not yet implemented");
 }
 
 /**
  * Generate external dependency scenarios
  */
 export async function generateExternalDependencyScenarios(
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<ContingencyScenario[]> {
   // TODO: Implement external dependency scenario generation
   // - Identify external dependencies
@@ -92,8 +92,8 @@ export async function generateExternalDependencyScenarios(
   // - Calculate blocking impacts
   // - Estimate failure probability
   // - Return dependency scenarios
-  
-  throw new Error('generateExternalDependencyScenarios not yet implemented');
+
+  throw new Error("generateExternalDependencyScenarios not yet implemented");
 }
 
 /**
@@ -101,15 +101,15 @@ export async function generateExternalDependencyScenarios(
  */
 export async function calculateScenarioProbability(
   scenario: ContingencyScenario,
-  historicalData?: unknown[]
+  historicalData?: unknown[],
 ): Promise<number> {
   // TODO: Implement probability calculation
   // - Analyze historical occurrence patterns
   // - Apply statistical models
   // - Consider current context factors
   // - Return calculated probability (0-1)
-  
-  throw new Error('calculateScenarioProbability not yet implemented');
+
+  throw new Error("calculateScenarioProbability not yet implemented");
 }
 
 /**
@@ -117,7 +117,7 @@ export async function calculateScenarioProbability(
  */
 export async function assessScenarioImpact(
   scenario: ContingencyScenario,
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<RiskImpact> {
   // TODO: Implement impact assessment
   // - Calculate delay impact
@@ -125,8 +125,8 @@ export async function assessScenarioImpact(
   // - Evaluate quality effects
   // - Determine resource impact
   // - Return impact level
-  
-  throw new Error('assessScenarioImpact not yet implemented');
+
+  throw new Error("assessScenarioImpact not yet implemented");
 }
 
 /**
@@ -135,21 +135,21 @@ export async function assessScenarioImpact(
 export async function createScenarioTriggers(
   conditions: Array<{
     metric: string;
-    operator: '>' | '<' | '=' | '>=' | '<=';
+    operator: ">" | "<" | "=" | ">=" | "<=";
     threshold: number;
-  }>
+  }>,
 ): Promise<ScenarioTrigger[]> {
   // TODO: Implement trigger creation
   // - Convert conditions to triggers
   // - Validate trigger logic
   // - Set monitoring parameters
   // - Return scenario triggers
-  
+
   const triggers: ScenarioTrigger[] = conditions.map((condition, index) => ({
     condition: condition.metric,
     threshold: condition.threshold,
     operator: condition.operator,
-    metric: condition.metric
+    metric: condition.metric,
   }));
 
   return triggers;
@@ -159,7 +159,7 @@ export async function createScenarioTriggers(
  * Validate scenario definition
  */
 export async function validateScenario(
-  scenario: ContingencyScenario
+  scenario: ContingencyScenario,
 ): Promise<boolean> {
   // Basic validation
   if (!scenario.id || !scenario.name || !scenario.description) {
@@ -178,7 +178,7 @@ export async function validateScenario(
   // - Validate trigger conditions
   // - Check impact calculations
   // - Verify scenario logic
-  
+
   return true;
 }
 
@@ -187,7 +187,7 @@ export async function validateScenario(
  */
 export async function mergeScenarios(
   scenarios: ContingencyScenario[],
-  similarityThreshold: number = 0.8
+  similarityThreshold: number = 0.8,
 ): Promise<ContingencyScenario[]> {
   // TODO: Implement scenario merging
   // - Calculate scenario similarity
@@ -195,23 +195,23 @@ export async function mergeScenarios(
   // - Merge scenarios above threshold
   // - Combine probabilities and impacts
   // - Return merged scenarios
-  
-  throw new Error('mergeScenarios not yet implemented');
+
+  throw new Error("mergeScenarios not yet implemented");
 }
 
 /**
  * Rank scenarios by risk priority
  */
 export function rankScenariosByRisk(
-  scenarios: ContingencyScenario[]
+  scenarios: ContingencyScenario[],
 ): ContingencyScenario[] {
   // Simple ranking by probability * impact severity
   const impactValues = {
-    'minimal': 1,
-    'low': 2,
-    'medium': 3,
-    'high': 4,
-    'severe': 5
+    minimal: 1,
+    low: 2,
+    medium: 3,
+    high: 4,
+    severe: 5,
   };
 
   return scenarios.sort((a, b) => {
@@ -226,23 +226,23 @@ export function rankScenariosByRisk(
  */
 export function filterScenariosByCategory(
   scenarios: ContingencyScenario[],
-  categories: ScenarioCategory[]
+  categories: ScenarioCategory[],
 ): ContingencyScenario[] {
-  return scenarios.filter(scenario => categories.includes(scenario.category));
+  return scenarios.filter((scenario) => categories.includes(scenario.category));
 }
 
 /**
  * Calculate combined scenario probability
  */
 export function calculateCombinedProbability(
-  scenarios: ContingencyScenario[]
+  scenarios: ContingencyScenario[],
 ): number {
   // Calculate probability that at least one scenario occurs
   // P(A or B or C) = 1 - P(not A and not B and not C)
   const notOccurProbability = scenarios.reduce(
     (prob, scenario) => prob * (1 - scenario.probability),
-    1
+    1,
   );
-  
+
   return 1 - notOccurProbability;
 }

@@ -6,7 +6,7 @@ export interface ScenarioParameter {
   name: string;
   min: number;
   max: number;
-  distribution: 'uniform' | 'normal' | 'triangular';
+  distribution: "uniform" | "normal" | "triangular";
 }
 
 export interface ScenarioModel {
@@ -20,23 +20,26 @@ export class ScenarioModeling {
   /**
    * Generate scenario variants based on parameter ranges
    */
-  static generateScenarios(baseParams: ScenarioParameter[], count: number = 100): ScenarioModel[] {
+  static generateScenarios(
+    baseParams: ScenarioParameter[],
+    count: number = 100,
+  ): ScenarioModel[] {
     const scenarios: ScenarioModel[] = [];
-    
+
     for (let i = 0; i < count; i++) {
-      const parameters = baseParams.map(param => ({
+      const parameters = baseParams.map((param) => ({
         ...param,
-        value: this.sampleParameter(param)
+        value: this.sampleParameter(param),
       }));
-      
+
       scenarios.push({
         id: `scenario_${i}`,
         name: `Scenario ${i + 1}`,
         parameters,
-        probability: 1 / count // uniform probability for now
+        probability: 1 / count, // uniform probability for now
       });
     }
-    
+
     return scenarios;
   }
 
@@ -46,11 +49,11 @@ export class ScenarioModeling {
   private static sampleParameter(param: ScenarioParameter): number {
     const { min, max, distribution } = param;
     const random = Math.random();
-    
+
     switch (distribution) {
-      case 'uniform':
+      case "uniform":
         return min + random * (max - min);
-      case 'normal':
+      case "normal":
         // Box-Muller transform for normal distribution
         const u1 = Math.random();
         const u2 = Math.random();
@@ -58,7 +61,7 @@ export class ScenarioModeling {
         const mean = (min + max) / 2;
         const std = (max - min) / 6; // 3-sigma rule
         return Math.max(min, Math.min(max, mean + z0 * std));
-      case 'triangular':
+      case "triangular":
         const mode = (min + max) / 2;
         return this.triangularSample(min, max, mode);
       default:
@@ -69,10 +72,14 @@ export class ScenarioModeling {
   /**
    * Sample from triangular distribution
    */
-  private static triangularSample(min: number, max: number, mode: number): number {
+  private static triangularSample(
+    min: number,
+    max: number,
+    mode: number,
+  ): number {
     const u = Math.random();
     const c = (mode - min) / (max - min);
-    
+
     if (u < c) {
       return min + Math.sqrt(u * (max - min) * (mode - min));
     } else {

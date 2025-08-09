@@ -1,22 +1,19 @@
 /**
  * Module 7.4.1 - Health Monitor
- * 
+ *
  * Purpose: Monitor schedule health indicators and track trends
- * 
+ *
  * @author AI Scheduler Development Team
  * @version 1.0.0
  */
 
 import type {
-  Schedule,
-  HealthStatus,
-  HealthIndicator,
   HealthAlert,
+  HealthIndicator,
+  HealthStatus,
+  Schedule,
   TrendIndicator,
-  HealthLevel,
-  RiskSeverity,
-  TrendDirection
-} from '../shared-types';
+} from "../shared-types";
 
 /**
  * Health Monitor - Tracks schedule health and performance indicators
@@ -37,19 +34,22 @@ export class HealthMonitor {
     // - Configure monitoring intervals
     // - Initialize trend tracking
     // - Set up alert system
-    
+
     this.isInitialized = true;
-    console.log('HealthMonitor initialized');
+    console.log("HealthMonitor initialized");
   }
 
   /**
    * Start health monitoring for a schedule
    */
-  async startMonitoring(schedule: Schedule, intervalMs: number = 60000): Promise<void> {
+  async startMonitoring(
+    schedule: Schedule,
+    intervalMs: number = 60000,
+  ): Promise<void> {
     this.ensureInitialized();
 
     if (this.monitoringActive) {
-      console.log('Health monitoring already active');
+      console.log("Health monitoring already active");
       return;
     }
 
@@ -57,14 +57,14 @@ export class HealthMonitor {
     // - Initialize health indicators
     // - Start monitoring intervals
     // - Begin trend tracking
-    
+
     this.monitoringActive = true;
     this.monitoringInterval = setInterval(
       () => this.performHealthCheck(schedule),
-      intervalMs
+      intervalMs,
     );
-    
-    console.log('Health monitoring started for schedule:', schedule.id);
+
+    console.log("Health monitoring started for schedule:", schedule.id);
   }
 
   /**
@@ -75,9 +75,9 @@ export class HealthMonitor {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = null;
     }
-    
+
     this.monitoringActive = false;
-    console.log('Health monitoring stopped');
+    console.log("Health monitoring stopped");
   }
 
   /**
@@ -91,14 +91,16 @@ export class HealthMonitor {
     // - Collect health indicators
     // - Generate alerts
     // - Track trends
-    
-    throw new Error('HealthMonitor.getHealthStatus not yet implemented');
+
+    throw new Error("HealthMonitor.getHealthStatus not yet implemented");
   }
 
   /**
    * Calculate health indicators
    */
-  async calculateHealthIndicators(schedule: Schedule): Promise<HealthIndicator[]> {
+  async calculateHealthIndicators(
+    schedule: Schedule,
+  ): Promise<HealthIndicator[]> {
     this.ensureInitialized();
 
     // TODO: Implement health indicator calculation
@@ -106,14 +108,16 @@ export class HealthMonitor {
     // - Track resource utilization
     // - Measure schedule adherence
     // - Assess quality metrics
-    
-    throw new Error('calculateHealthIndicators not yet implemented');
+
+    throw new Error("calculateHealthIndicators not yet implemented");
   }
 
   /**
    * Generate health alerts
    */
-  async generateHealthAlerts(indicators: HealthIndicator[]): Promise<HealthAlert[]> {
+  async generateHealthAlerts(
+    indicators: HealthIndicator[],
+  ): Promise<HealthAlert[]> {
     this.ensureInitialized();
 
     // TODO: Implement health alert generation
@@ -121,8 +125,8 @@ export class HealthMonitor {
     // - Determine alert severity
     // - Create alert messages
     // - Set resolution timers
-    
-    throw new Error('generateHealthAlerts not yet implemented');
+
+    throw new Error("generateHealthAlerts not yet implemented");
   }
 
   /**
@@ -136,8 +140,8 @@ export class HealthMonitor {
     // - Calculate trend directions
     // - Measure velocity of change
     // - Assess confidence levels
-    
-    throw new Error('trackTrends not yet implemented');
+
+    throw new Error("trackTrends not yet implemented");
   }
 
   /**
@@ -148,8 +152,8 @@ export class HealthMonitor {
     // - Validate new thresholds
     // - Update monitoring rules
     // - Recalibrate alerts
-    
-    console.log('Health thresholds updated:', thresholds);
+
+    console.log("Health thresholds updated:", thresholds);
   }
 
   /**
@@ -167,8 +171,8 @@ export class HealthMonitor {
     // - Aggregate health metrics
     // - Format for display
     // - Include trend analysis
-    
-    throw new Error('getDashboardData not yet implemented');
+
+    throw new Error("getDashboardData not yet implemented");
   }
 
   /**
@@ -188,16 +192,16 @@ export class HealthMonitor {
       // - Check for threshold violations
       // - Generate alerts if needed
       // - Update trend data
-      
-      console.log('Health check performed for schedule:', schedule.id);
+
+      console.log("Health check performed for schedule:", schedule.id);
     } catch (error) {
-      console.error('Error in health check:', error);
+      console.error("Error in health check:", error);
     }
   }
 
   private ensureInitialized(): void {
     if (!this.isInitialized) {
-      throw new Error('HealthMonitor must be initialized before use');
+      throw new Error("HealthMonitor must be initialized before use");
     }
   }
 }

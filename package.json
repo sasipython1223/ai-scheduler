@@ -256,7 +256,13 @@
     "prisma": "^6.13.0"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx vitest run",
+    "test:watch": "npx vitest",
+    "test:coverage": "npx vitest run --coverage",
+    "report:tests": "node -e \"require('fs').mkdirSync('tmp',{recursive:true})\" && npx vitest run --reporter=json --outputFile=tmp/jest.json",
+    "report:perf": "npx vitest run **/*.perf.test.ts --reporter=verbose",
+    "report:roadmap": "node scripts/report-roadmap.js",
+    "report:all": "npm run report:tests && npm run report:roadmap"
   },
   "keywords": [],
   "author": "",

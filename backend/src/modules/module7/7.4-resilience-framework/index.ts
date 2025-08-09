@@ -1,8 +1,8 @@
 /**
  * Module 7.4 - Schedule Resilience Framework - Main Entry Point
- * 
+ *
  * Purpose: Unified interface for resilience analysis, contingency planning, and risk management
- * 
+ *
  * @author AI Scheduler Development Team
  * @version 1.0.0
  */
@@ -11,7 +11,7 @@
 // CORE FRAMEWORK EXPORTS
 // ============================================================================
 
-export { ScheduleResilienceFramework } from './resilience-framework';
+export { ScheduleResilienceFramework } from "./resilience-framework";
 
 // ============================================================================
 // COMPONENT EXPORTS (commented until components are implemented)
@@ -37,14 +37,14 @@ export { ScheduleResilienceFramework } from './resilience-framework';
 // SHARED TYPE EXPORTS
 // ============================================================================
 
-export * from './shared-types';
+export * from "./shared-types";
 
 // ============================================================================
 // CONSTANTS AND CONFIGURATION
 // ============================================================================
 
-export const RESILIENCE_FRAMEWORK_VERSION = '1.0.0';
-export const MODULE_NAME = 'Schedule Resilience Framework';
+export const RESILIENCE_FRAMEWORK_VERSION = "1.0.0";
+export const MODULE_NAME = "Schedule Resilience Framework";
 
 export const DEFAULT_FRAMEWORK_CONFIG = {
   analysis: {
@@ -53,21 +53,21 @@ export const DEFAULT_FRAMEWORK_CONFIG = {
       resource: 0.25,
       dependency: 0.2,
       buffer: 0.15,
-      complexity: 0.1
+      complexity: 0.1,
     },
     thresholds: {
       low: 25,
       medium: 50,
       high: 75,
-      critical: 90
+      critical: 90,
     },
-    updateInterval: 300000 // 5 minutes in milliseconds
+    updateInterval: 300000, // 5 minutes in milliseconds
   },
   contingency: {
     maxAlternatives: 5,
     scenarioTimeout: 30000, // 30 seconds
     validationStrict: true,
-    simulationIterations: 1000
+    simulationIterations: 1000,
   },
   risk: {
     monitoringInterval: 60000, // 1 minute
@@ -78,9 +78,9 @@ export const DEFAULT_FRAMEWORK_CONFIG = {
       low: 25,
       medium: 50,
       high: 75,
-      critical: 90
-    }
-  }
+      critical: 90,
+    },
+  },
 } as const;
 
 // ============================================================================
@@ -92,9 +92,11 @@ export const DEFAULT_FRAMEWORK_CONFIG = {
  * @param config Optional configuration overrides
  * @returns Configured framework instance
  */
-export function createResilienceFramework(config?: Partial<typeof DEFAULT_FRAMEWORK_CONFIG>) {
+export function createResilienceFramework(
+  config?: Partial<typeof DEFAULT_FRAMEWORK_CONFIG>,
+) {
   // TODO: Implement factory function
-  throw new Error('createResilienceFramework not yet implemented');
+  throw new Error("createResilienceFramework not yet implemented");
 }
 
 /**
@@ -104,7 +106,7 @@ export function createResilienceFramework(config?: Partial<typeof DEFAULT_FRAMEW
  */
 export function validateFrameworkConfig(config: unknown): boolean {
   // TODO: Implement configuration validation
-  console.log('validateFrameworkConfig called with:', config);
+  console.log("validateFrameworkConfig called with:", config);
   return true;
 }
 

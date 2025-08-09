@@ -1,20 +1,20 @@
 /**
  * Module 7.4 - Scoring Utilities
- * 
+ *
  * Purpose: Utility functions for risk scoring and metric calculations
- * 
+ *
  * @author AI Scheduler Development Team
  * @version 1.0.0
  */
 
 import type {
-  Schedule,
-  Task,
   Resource,
-  ScoringWeights,
+  RiskLevel,
   RiskThresholds,
-  RiskLevel
-} from '../shared-types';
+  Schedule,
+  ScoringWeights,
+  Task,
+} from "../shared-types";
 
 /**
  * Calculate overall risk score for a schedule
@@ -22,37 +22,37 @@ import type {
 export async function calculateRiskScore(
   schedule: Schedule,
   weights: ScoringWeights,
-  thresholds: RiskThresholds
+  thresholds: RiskThresholds,
 ): Promise<number> {
   // TODO: Implement risk score calculation
   // - Calculate individual risk metrics
   // - Apply scoring weights
   // - Normalize to 0-100 scale
   // - Return overall risk score
-  
-  throw new Error('calculateRiskScore not yet implemented');
+
+  throw new Error("calculateRiskScore not yet implemented");
 }
 
 /**
  * Calculate critical path risk score
  */
 export async function calculateCriticalPathScore(
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<number> {
   // TODO: Implement critical path scoring
   // - Identify critical path tasks
   // - Assess task risk factors
   // - Calculate path vulnerability
   // - Return normalized score (0-100)
-  
-  throw new Error('calculateCriticalPathScore not yet implemented');
+
+  throw new Error("calculateCriticalPathScore not yet implemented");
 }
 
 /**
  * Calculate resource risk score
  */
 export async function calculateResourceScore(
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<number> {
   // TODO: Implement resource risk scoring
   // - Analyze resource availability
@@ -60,15 +60,15 @@ export async function calculateResourceScore(
   // - Evaluate skill gaps
   // - Calculate overallocation risk
   // - Return normalized score (0-100)
-  
-  throw new Error('calculateResourceScore not yet implemented');
+
+  throw new Error("calculateResourceScore not yet implemented");
 }
 
 /**
  * Calculate dependency risk score
  */
 export async function calculateDependencyScore(
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<number> {
   // TODO: Implement dependency risk scoring
   // - Map task dependencies
@@ -76,30 +76,30 @@ export async function calculateDependencyScore(
   // - Evaluate failure propagation
   // - Calculate coupling risk
   // - Return normalized score (0-100)
-  
-  throw new Error('calculateDependencyScore not yet implemented');
+
+  throw new Error("calculateDependencyScore not yet implemented");
 }
 
 /**
  * Calculate buffer sufficiency score
  */
 export async function calculateBufferScore(
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<number> {
   // TODO: Implement buffer scoring
   // - Analyze schedule buffers
   // - Assess buffer distribution
   // - Evaluate adequacy vs. risk
   // - Return normalized score (0-100)
-  
-  throw new Error('calculateBufferScore not yet implemented');
+
+  throw new Error("calculateBufferScore not yet implemented");
 }
 
 /**
  * Calculate complexity score
  */
 export async function calculateComplexityScore(
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<number> {
   // TODO: Implement complexity scoring
   // - Count schedule elements
@@ -107,8 +107,8 @@ export async function calculateComplexityScore(
   // - Assess constraint complexity
   // - Calculate complexity factor
   // - Return normalized score (0-100)
-  
-  throw new Error('calculateComplexityScore not yet implemented');
+
+  throw new Error("calculateComplexityScore not yet implemented");
 }
 
 /**
@@ -116,7 +116,7 @@ export async function calculateComplexityScore(
  */
 export async function calculateTaskRiskScore(
   task: Task,
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<number> {
   // TODO: Implement task risk scoring
   // - Assess task characteristics
@@ -124,8 +124,8 @@ export async function calculateTaskRiskScore(
   // - Check resource constraints
   // - Calculate risk factors
   // - Return task risk score (0-100)
-  
-  throw new Error('calculateTaskRiskScore not yet implemented');
+
+  throw new Error("calculateTaskRiskScore not yet implemented");
 }
 
 /**
@@ -133,15 +133,15 @@ export async function calculateTaskRiskScore(
  */
 export async function calculateResourceUtilizationScore(
   resource: Resource,
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<number> {
   // TODO: Implement resource utilization scoring
   // - Calculate utilization rate
   // - Assess overallocation risk
   // - Evaluate availability gaps
   // - Return utilization score (0-100)
-  
-  throw new Error('calculateResourceUtilizationScore not yet implemented');
+
+  throw new Error("calculateResourceUtilizationScore not yet implemented");
 }
 
 /**
@@ -149,9 +149,9 @@ export async function calculateResourceUtilizationScore(
  */
 export function applyWeights(
   scores: Record<string, number>,
-  weights: ScoringWeights
+  weights: ScoringWeights,
 ): number {
-  const weightedScore = 
+  const weightedScore =
     (scores.criticalPath || 0) * weights.criticalPath +
     (scores.resource || 0) * weights.resource +
     (scores.dependency || 0) * weights.dependency +
@@ -159,8 +159,11 @@ export function applyWeights(
     (scores.complexity || 0) * weights.complexity;
 
   // Normalize weights to ensure they sum to 1
-  const totalWeight = Object.values(weights).reduce((sum, weight) => sum + weight, 0);
-  
+  const totalWeight = Object.values(weights).reduce(
+    (sum, weight) => sum + weight,
+    0,
+  );
+
   return totalWeight > 0 ? weightedScore / totalWeight : 0;
 }
 
@@ -170,7 +173,7 @@ export function applyWeights(
 export function normalizeScore(
   rawScore: number,
   min: number = 0,
-  max: number = 100
+  max: number = 100,
 ): number {
   return Math.max(0, Math.min(100, ((rawScore - min) / (max - min)) * 100));
 }
@@ -180,13 +183,13 @@ export function normalizeScore(
  */
 export function scoreToRiskLevel(
   score: number,
-  thresholds: RiskThresholds
+  thresholds: RiskThresholds,
 ): RiskLevel {
-  if (score < thresholds.low) return 'very-low';
-  if (score < thresholds.medium) return 'low';
-  if (score < thresholds.high) return 'medium';
-  if (score < thresholds.critical) return 'high';
-  return 'very-high';
+  if (score < thresholds.low) return "very-low";
+  if (score < thresholds.medium) return "low";
+  if (score < thresholds.high) return "medium";
+  if (score < thresholds.critical) return "high";
+  return "very-high";
 }
 
 /**
@@ -195,15 +198,15 @@ export function scoreToRiskLevel(
 export function calculateScoreConfidence(
   score: number,
   dataPoints: number,
-  variance: number = 5
+  variance: number = 5,
 ): { lower: number; upper: number; confidence: number } {
   // Simple confidence calculation - could be enhanced with statistical methods
   const margin = Math.max(1, variance * Math.sqrt(1 / Math.max(1, dataPoints)));
-  
+
   return {
     lower: Math.max(0, score - margin),
     upper: Math.min(100, score + margin),
-    confidence: Math.min(1, dataPoints / 10) // Higher confidence with more data points
+    confidence: Math.min(1, dataPoints / 10), // Higher confidence with more data points
   };
 }
 
@@ -211,7 +214,7 @@ export function calculateScoreConfidence(
  * Aggregate multiple scores with different weights
  */
 export function aggregateScores(
-  scores: Array<{ value: number; weight: number; confidence?: number }>
+  scores: Array<{ value: number; weight: number; confidence?: number }>,
 ): { aggregatedScore: number; totalConfidence: number } {
   let totalWeightedScore = 0;
   let totalWeight = 0;
@@ -226,7 +229,7 @@ export function aggregateScores(
 
   return {
     aggregatedScore: totalWeight > 0 ? totalWeightedScore / totalWeight : 0,
-    totalConfidence: scores.length > 0 ? totalConfidence / scores.length : 0
+    totalConfidence: scores.length > 0 ? totalConfidence / scores.length : 0,
   };
 }
 
@@ -234,26 +237,28 @@ export function aggregateScores(
  * Calculate score trend over time
  */
 export function calculateScoreTrend(
-  historicalScores: Array<{ timestamp: Date; score: number }>
-): { direction: 'improving' | 'stable' | 'degrading'; velocity: number } {
+  historicalScores: Array<{ timestamp: Date; score: number }>,
+): { direction: "improving" | "stable" | "degrading"; velocity: number } {
   if (historicalScores.length < 2) {
-    return { direction: 'stable', velocity: 0 };
+    return { direction: "stable", velocity: 0 };
   }
 
   // Simple linear trend calculation
   const recent = historicalScores.slice(-5); // Last 5 data points
   const first = recent[0];
   const last = recent[recent.length - 1];
-  
+
   const timeDiff = last.timestamp.getTime() - first.timestamp.getTime();
   const scoreDiff = last.score - first.score;
-  
-  const velocity = timeDiff > 0 ? scoreDiff / (timeDiff / (1000 * 60 * 60 * 24)) : 0; // per day
-  
-  let direction: 'improving' | 'stable' | 'degrading' = 'stable';
-  if (Math.abs(velocity) > 0.5) { // Threshold for significant change
-    direction = velocity < 0 ? 'improving' : 'degrading'; // Lower scores = better (improving)
+
+  const velocity =
+    timeDiff > 0 ? scoreDiff / (timeDiff / (1000 * 60 * 60 * 24)) : 0; // per day
+
+  let direction: "improving" | "stable" | "degrading" = "stable";
+  if (Math.abs(velocity) > 0.5) {
+    // Threshold for significant change
+    direction = velocity < 0 ? "improving" : "degrading"; // Lower scores = better (improving)
   }
-  
+
   return { direction, velocity: Math.abs(velocity) };
 }

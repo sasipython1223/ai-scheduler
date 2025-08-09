@@ -1,19 +1,19 @@
 /**
  * Module 7.4.2 - Alternative Generator
- * 
+ *
  * Purpose: Generate alternative schedules for contingency scenarios
- * 
+ *
  * @author AI Scheduler Development Team
  * @version 1.0.0
  */
 
 import type {
-  Schedule,
-  ContingencyScenario,
-  AlternativeScheduleOptions,
   AlternativeOutcome,
-  ValidationResult
-} from '../shared-types';
+  AlternativeScheduleOptions,
+  ContingencyScenario,
+  Schedule,
+  ValidationResult,
+} from "../shared-types";
 
 /**
  * Alternative Generator - Creates alternative schedules for scenarios
@@ -32,9 +32,9 @@ export class AlternativeGenerator {
     // - Set up scheduling engines
     // - Initialize constraint solvers
     // - Configure quality metrics
-    
+
     this.isInitialized = true;
-    console.log('AlternativeGenerator initialized');
+    console.log("AlternativeGenerator initialized");
   }
 
   /**
@@ -43,7 +43,7 @@ export class AlternativeGenerator {
   async generateAlternatives(
     originalSchedule: Schedule,
     scenarios: ContingencyScenario[],
-    options: AlternativeScheduleOptions
+    options: AlternativeScheduleOptions,
   ): Promise<AlternativeOutcome[]> {
     this.ensureInitialized();
 
@@ -54,8 +54,10 @@ export class AlternativeGenerator {
     //   - Optimize for objectives
     //   - Validate feasibility
     //   - Calculate metrics
-    
-    throw new Error('AlternativeGenerator.generateAlternatives not yet implemented');
+
+    throw new Error(
+      "AlternativeGenerator.generateAlternatives not yet implemented",
+    );
   }
 
   /**
@@ -64,7 +66,7 @@ export class AlternativeGenerator {
   async generateSingleAlternative(
     originalSchedule: Schedule,
     scenario: ContingencyScenario,
-    options: AlternativeScheduleOptions
+    options: AlternativeScheduleOptions,
   ): Promise<Schedule> {
     this.ensureInitialized();
 
@@ -76,8 +78,8 @@ export class AlternativeGenerator {
     // - Consider cost constraints
     // - Maintain quality thresholds
     // - Optimize new schedule
-    
-    throw new Error('generateSingleAlternative not yet implemented');
+
+    throw new Error("generateSingleAlternative not yet implemented");
   }
 
   /**
@@ -86,7 +88,7 @@ export class AlternativeGenerator {
   async optimizeAlternative(
     schedule: Schedule,
     objectives: string[],
-    constraints: Record<string, unknown>
+    constraints: Record<string, unknown>,
   ): Promise<Schedule> {
     this.ensureInitialized();
 
@@ -96,8 +98,8 @@ export class AlternativeGenerator {
     // - Balance conflicting objectives
     // - Maintain constraint compliance
     // - Validate optimized schedule
-    
-    throw new Error('optimizeAlternative not yet implemented');
+
+    throw new Error("optimizeAlternative not yet implemented");
   }
 
   /**
@@ -107,7 +109,7 @@ export class AlternativeGenerator {
     alternative: Schedule,
     original: Schedule,
     scenario: ContingencyScenario,
-    options: AlternativeScheduleOptions
+    options: AlternativeScheduleOptions,
   ): Promise<ValidationResult> {
     this.ensureInitialized();
 
@@ -118,8 +120,8 @@ export class AlternativeGenerator {
     // - Assess quality requirements
     // - Test scenario applicability
     // - Calculate validation score
-    
-    throw new Error('validateAlternative not yet implemented');
+
+    throw new Error("validateAlternative not yet implemented");
   }
 
   /**
@@ -138,8 +140,8 @@ export class AlternativeGenerator {
     // - Rank alternatives by score
     // - Generate comparison matrix
     // - Provide recommendation
-    
-    throw new Error('compareAlternatives not yet implemented');
+
+    throw new Error("compareAlternatives not yet implemented");
   }
 
   /**
@@ -147,7 +149,7 @@ export class AlternativeGenerator {
    */
   async calculateAlternativeMetrics(
     alternative: Schedule,
-    original: Schedule
+    original: Schedule,
   ): Promise<{
     cost: number;
     duration: number;
@@ -163,8 +165,8 @@ export class AlternativeGenerator {
     // - Assess risk reduction
     // - Evaluate viability
     // - Measure quality impact
-    
-    throw new Error('calculateAlternativeMetrics not yet implemented');
+
+    throw new Error("calculateAlternativeMetrics not yet implemented");
   }
 
   /**
@@ -173,7 +175,11 @@ export class AlternativeGenerator {
   async generateExecutionPlan(alternative: Schedule): Promise<{
     phases: Array<{ name: string; duration: number; dependencies: string[] }>;
     milestones: Array<{ name: string; date: Date; deliverables: string[] }>;
-    resources: Array<{ resourceId: string; allocation: number; timeline: string }>;
+    resources: Array<{
+      resourceId: string;
+      allocation: number;
+      timeline: string;
+    }>;
   }> {
     this.ensureInitialized();
 
@@ -182,8 +188,8 @@ export class AlternativeGenerator {
     // - Define milestones
     // - Plan resource allocation
     // - Create implementation timeline
-    
-    throw new Error('generateExecutionPlan not yet implemented');
+
+    throw new Error("generateExecutionPlan not yet implemented");
   }
 
   /**
@@ -195,7 +201,7 @@ export class AlternativeGenerator {
 
   private ensureInitialized(): void {
     if (!this.isInitialized) {
-      throw new Error('AlternativeGenerator must be initialized before use');
+      throw new Error("AlternativeGenerator must be initialized before use");
     }
   }
 }

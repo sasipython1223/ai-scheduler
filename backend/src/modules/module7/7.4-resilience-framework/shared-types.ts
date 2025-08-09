@@ -1,9 +1,9 @@
 /**
  * Module 7.4 - Schedule Resilience Framework - Shared Types
- * 
+ *
  * Purpose: Common TypeScript interfaces and types for resilience analysis,
  * contingency planning, and risk management across all sub-modules.
- * 
+ *
  * @author AI Scheduler Development Team
  * @version 1.0.0
  */
@@ -51,7 +51,7 @@ export interface Constraint {
   type: ConstraintType;
   scope: string[];
   parameters: Record<string, unknown>;
-  severity: 'hard' | 'soft';
+  severity: "hard" | "soft";
 }
 
 export interface ScheduleMetadata {
@@ -70,13 +70,13 @@ export interface ScheduleMetadata {
  * Comprehensive resilience metrics for schedule robustness assessment
  */
 export interface ResilienceMetrics {
-  overallScore: number;           // 0-100 composite resilience score
-  criticalPathRisk: number;       // 0-100 critical path vulnerability
-  resourceRisk: number;           // 0-100 resource availability risk
-  dependencyRisk: number;         // 0-100 dependency chain risk
-  bufferSufficiency: number;      // 0-100 float buffer adequacy
-  complexityFactor: number;       // Schedule complexity multiplier
-  stabilityIndex: number;         // Historical stability measure
+  overallScore: number; // 0-100 composite resilience score
+  criticalPathRisk: number; // 0-100 critical path vulnerability
+  resourceRisk: number; // 0-100 resource availability risk
+  dependencyRisk: number; // 0-100 dependency chain risk
+  bufferSufficiency: number; // 0-100 float buffer adequacy
+  complexityFactor: number; // Schedule complexity multiplier
+  stabilityIndex: number; // Historical stability measure
 }
 
 /**
@@ -94,7 +94,7 @@ export interface VulnerabilityReport {
 
 export interface ResourceConstraint {
   resourceId: string;
-  type: 'availability' | 'capacity' | 'skills';
+  type: "availability" | "capacity" | "skills";
   severity: RiskSeverity;
   description: string;
   affectedTasks: string[];
@@ -103,7 +103,7 @@ export interface ResourceConstraint {
 
 export interface TimeboxViolation {
   taskId: string;
-  violationType: 'overrun' | 'underestimated' | 'blocked';
+  violationType: "overrun" | "underestimated" | "blocked";
   expectedDuration: number;
   actualDuration: number;
   impact: RiskImpact;
@@ -120,7 +120,7 @@ export interface VulnerableTask {
 
 export interface Bottleneck {
   location: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   affectedTasks: string[];
   alternativePaths: string[];
 }
@@ -145,7 +145,7 @@ export interface HealthStatus {
 
 export interface HealthAlert {
   id: string;
-  type: 'performance' | 'capacity' | 'quality' | 'schedule';
+  type: "performance" | "capacity" | "quality" | "schedule";
   severity: RiskSeverity;
   message: string;
   timestamp: Date;
@@ -165,8 +165,8 @@ export interface HealthIndicator {
   metric: string;
   currentValue: number;
   threshold: number;
-  status: 'healthy' | 'warning' | 'critical';
-  trend: 'improving' | 'stable' | 'degrading';
+  status: "healthy" | "warning" | "critical";
+  trend: "improving" | "stable" | "degrading";
 }
 
 // ============================================================================
@@ -180,12 +180,12 @@ export interface ContingencyScenario {
   id: string;
   name: string;
   description: string;
-  probability: number;            // 0-1 likelihood of occurrence
-  impact: RiskImpact;            // Expected impact level
-  triggers: ScenarioTrigger[];   // Conditions that activate scenario
-  affectedTasks: string[];       // Tasks impacted by scenario
-  affectedResources: string[];   // Resources impacted by scenario
-  duration: number;              // Expected scenario duration (hours)
+  probability: number; // 0-1 likelihood of occurrence
+  impact: RiskImpact; // Expected impact level
+  triggers: ScenarioTrigger[]; // Conditions that activate scenario
+  affectedTasks: string[]; // Tasks impacted by scenario
+  affectedResources: string[]; // Resources impacted by scenario
+  duration: number; // Expected scenario duration (hours)
   category: ScenarioCategory;
 }
 
@@ -195,9 +195,9 @@ export interface ContingencyPlan {
   name: string;
   alternativeSchedule: Schedule;
   mitigationActions: MitigationAction[];
-  implementationTime: number;    // Minutes to implement plan
+  implementationTime: number; // Minutes to implement plan
   resourceRequirements: ResourceRequirement[];
-  successProbability: number;    // 0-1 plan success likelihood
+  successProbability: number; // 0-1 plan success likelihood
   cost: PlanCost;
   validationResults: ValidationResult[];
 }
@@ -226,20 +226,20 @@ export interface CostBreakdown {
 export interface ScenarioTrigger {
   condition: string;
   threshold: number;
-  operator: '>' | '<' | '=' | '>=' | '<=';
+  operator: ">" | "<" | "=" | ">=" | "<=";
   metric: string;
 }
 
 export interface AlternativeScheduleOptions {
   preserveCriticalPath: boolean;
   allowResourceOverallocation: boolean;
-  maxDelayTolerance: number;     // Days
+  maxDelayTolerance: number; // Days
   costConstraints: CostConstraint[];
   qualityThresholds: QualityThreshold[];
 }
 
 export interface CostConstraint {
-  type: 'budget-limit' | 'cost-per-hour' | 'total-cap';
+  type: "budget-limit" | "cost-per-hour" | "total-cap";
   value: number;
   currency: string;
   flexibility: number;
@@ -292,12 +292,12 @@ export interface SimulationResult {
  */
 export interface RiskIndicator {
   id: string;
-  metric: string;               // Metric being monitored
-  currentValue: number;         // Current measurement
-  threshold: number;            // Alert threshold
-  trend: TrendDirection;        // Value trend over time
-  severity: RiskSeverity;       // Risk severity level
-  category: RiskCategory;       // Type of risk
+  metric: string; // Metric being monitored
+  currentValue: number; // Current measurement
+  threshold: number; // Alert threshold
+  trend: TrendDirection; // Value trend over time
+  severity: RiskSeverity; // Risk severity level
+  category: RiskCategory; // Type of risk
   lastUpdate: Date;
   history: RiskDataPoint[];
 }
@@ -338,12 +338,12 @@ export interface MitigationStrategy {
   id: string;
   name: string;
   description: string;
-  riskTypes: RiskCategory[];          // Risk types this strategy addresses
-  executionTime: number;              // Minutes to implement
-  costFactor: number;                 // Relative cost (1-10 scale)
-  successRate: number;                // Historical success rate (0-1)
-  prerequisites: string[];            // Required conditions
-  sideEffects: SideEffect[];         // Potential negative impacts
+  riskTypes: RiskCategory[]; // Risk types this strategy addresses
+  executionTime: number; // Minutes to implement
+  costFactor: number; // Relative cost (1-10 scale)
+  successRate: number; // Historical success rate (0-1)
+  prerequisites: string[]; // Required conditions
+  sideEffects: SideEffect[]; // Potential negative impacts
   execute: (context: RiskContext) => Promise<MitigationResult>;
 }
 
@@ -364,7 +364,7 @@ export interface MitigationResult {
   success: boolean;
   executionTime: number;
   actualCost: number;
-  effectivenessScore: number;     // 0-100 how well it resolved the risk
+  effectivenessScore: number; // 0-100 how well it resolved the risk
   sideEffects: SideEffect[];
   newRisks: RiskIndicator[];
   scheduleImpact: ScheduleImpact;
@@ -424,7 +424,7 @@ export interface ContingencyResource {
 export interface BufferAllocation {
   taskId: string;
   bufferTime: number;
-  bufferType: 'schedule' | 'resource' | 'quality';
+  bufferType: "schedule" | "resource" | "quality";
   justification: string;
 }
 
@@ -448,7 +448,7 @@ export interface OptimizationResult {
 
 export interface TaskModification {
   taskId: string;
-  modificationType: 'duration' | 'resources' | 'dependencies' | 'constraints';
+  modificationType: "duration" | "resources" | "dependencies" | "constraints";
   originalValue: unknown;
   newValue: unknown;
   reason: string;
@@ -459,16 +459,43 @@ export interface TaskModification {
 // UTILITY AND SUPPORT TYPES
 // ============================================================================
 
-export type RiskLevel = 'very-low' | 'low' | 'medium' | 'high' | 'very-high';
-export type RiskImpact = 'minimal' | 'low' | 'medium' | 'high' | 'severe';
-export type RiskSeverity = 'info' | 'low' | 'medium' | 'high' | 'critical';
-export type RiskCategory = 'schedule' | 'resource' | 'budget' | 'quality' | 'scope' | 'external';
-export type TrendDirection = 'improving' | 'stable' | 'degrading' | 'volatile';
-export type HealthLevel = 'excellent' | 'good' | 'fair' | 'poor' | 'critical';
-export type ActionPriority = 'immediate' | 'high' | 'medium' | 'low' | 'deferred';
-export type ScenarioCategory = 'resource-shortage' | 'timeline-pressure' | 'scope-change' | 'external-dependency' | 'quality-issue';
-export type RiskFactorType = 'complexity' | 'dependency' | 'resource' | 'timeline' | 'external' | 'technical';
-export type ConstraintType = 'temporal' | 'resource' | 'budget' | 'quality' | 'regulatory';
+export type RiskLevel = "very-low" | "low" | "medium" | "high" | "very-high";
+export type RiskImpact = "minimal" | "low" | "medium" | "high" | "severe";
+export type RiskSeverity = "info" | "low" | "medium" | "high" | "critical";
+export type RiskCategory =
+  | "schedule"
+  | "resource"
+  | "budget"
+  | "quality"
+  | "scope"
+  | "external";
+export type TrendDirection = "improving" | "stable" | "degrading" | "volatile";
+export type HealthLevel = "excellent" | "good" | "fair" | "poor" | "critical";
+export type ActionPriority =
+  | "immediate"
+  | "high"
+  | "medium"
+  | "low"
+  | "deferred";
+export type ScenarioCategory =
+  | "resource-shortage"
+  | "timeline-pressure"
+  | "scope-change"
+  | "external-dependency"
+  | "quality-issue";
+export type RiskFactorType =
+  | "complexity"
+  | "dependency"
+  | "resource"
+  | "timeline"
+  | "external"
+  | "technical";
+export type ConstraintType =
+  | "temporal"
+  | "resource"
+  | "budget"
+  | "quality"
+  | "regulatory";
 
 export interface AvailabilityWindow {
   start: Date;
@@ -478,21 +505,21 @@ export interface AvailabilityWindow {
 
 export interface ResourceAssignment {
   resourceId: string;
-  allocation: number;    // 0-1 (percentage)
+  allocation: number; // 0-1 (percentage)
   startDate: Date;
   endDate: Date;
 }
 
 export interface TimeConstraint {
-  type: 'deadline' | 'milestone' | 'dependency';
+  type: "deadline" | "milestone" | "dependency";
   targetDate: Date;
-  flexibility: number;   // Days of flexibility
+  flexibility: number; // Days of flexibility
 }
 
 export interface BudgetConstraint {
   maxCost: number;
   currency: string;
-  flexibility: number;   // Percentage over budget allowed
+  flexibility: number; // Percentage over budget allowed
 }
 
 export interface QualityRequirement {
@@ -543,14 +570,14 @@ export interface ValidationResult {
   isValid: boolean;
   errors: ValidationError[];
   warnings: ValidationWarning[];
-  score: number;        // 0-100 validation score
+  score: number; // 0-100 validation score
 }
 
 export interface ValidationError {
   code: string;
   message: string;
   field?: string;
-  severity: 'error' | 'warning' | 'info';
+  severity: "error" | "warning" | "info";
 }
 
 export interface ValidationWarning {
@@ -576,7 +603,7 @@ export interface ExecutionResult {
 export interface ExecutionStep {
   stepId: string;
   name: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
+  status: "pending" | "running" | "completed" | "failed";
   startTime: Date;
   endTime?: Date;
   result?: unknown;
@@ -591,7 +618,7 @@ export interface ExecutionMetrics {
 }
 
 export interface ExecutionIssue {
-  type: 'error' | 'warning' | 'info';
+  type: "error" | "warning" | "info";
   message: string;
   step: string;
   resolution?: string;
@@ -604,10 +631,10 @@ export interface ExecutionIssue {
 export interface TrendAnalysis {
   metric: string;
   direction: TrendDirection;
-  velocity: number;      // Rate of change
+  velocity: number; // Rate of change
   predictedValue: number;
-  confidence: number;    // 0-1 prediction confidence
-  timeframe: number;     // Days for prediction
+  confidence: number; // 0-1 prediction confidence
+  timeframe: number; // Days for prediction
 }
 
 export interface Dashboard {
@@ -618,7 +645,7 @@ export interface Dashboard {
 }
 
 export interface DashboardWidget {
-  type: 'metric' | 'chart' | 'alert' | 'list';
+  type: "metric" | "chart" | "alert" | "list";
   title: string;
   data: unknown;
   position: WidgetPosition;
@@ -646,7 +673,7 @@ export interface RecommendationItem {
   title: string;
   description: string;
   expectedBenefit: string;
-  effort: 'low' | 'medium' | 'high';
+  effort: "low" | "medium" | "high";
   timeline: string;
   dependencies: string[];
 }
@@ -658,16 +685,16 @@ export interface ResilienceConfig {
   analysis: {
     scoringWeights: ScoringWeights;
     thresholds: RiskThresholds;
-    updateInterval: number;        // Seconds
+    updateInterval: number; // Seconds
   };
   contingency: {
     maxAlternatives: number;
-    scenarioTimeout: number;       // Seconds
+    scenarioTimeout: number; // Seconds
     validationStrict: boolean;
   };
   risk: {
-    monitoringInterval: number;    // Seconds
-    alertRetention: number;        // Days
+    monitoringInterval: number; // Seconds
+    alertRetention: number; // Days
     autoMitigation: boolean;
   };
 }

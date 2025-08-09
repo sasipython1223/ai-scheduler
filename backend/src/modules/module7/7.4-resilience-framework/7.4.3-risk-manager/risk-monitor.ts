@@ -1,20 +1,19 @@
 /**
  * Module 7.4.3 - Risk Monitor
- * 
+ *
  * Purpose: Monitor risk indicators and track risk metrics in real-time
- * 
+ *
  * @author AI Scheduler Development Team
  * @version 1.0.0
  */
 
 import type {
-  Schedule,
-  RiskIndicator,
   RiskDataPoint,
+  RiskIndicator,
   RiskSeverity,
-  RiskCategory,
-  TrendDirection
-} from '../shared-types';
+  Schedule,
+  TrendDirection,
+} from "../shared-types";
 
 /**
  * Risk Monitor - Monitors risk indicators and collects risk metrics
@@ -34,9 +33,9 @@ export class RiskMonitor {
     // - Initialize risk indicators
     // - Configure data collection
     // - Set up trend analysis
-    
+
     this.isInitialized = true;
-    console.log('RiskMonitor initialized');
+    console.log("RiskMonitor initialized");
   }
 
   /**
@@ -50,8 +49,8 @@ export class RiskMonitor {
     // - Set up data collection points
     // - Begin trend tracking
     // - Configure alert thresholds
-    
-    console.log('Risk monitoring started for schedule:', schedule.id);
+
+    console.log("Risk monitoring started for schedule:", schedule.id);
   }
 
   /**
@@ -62,8 +61,8 @@ export class RiskMonitor {
     // - Stop data collection
     // - Save indicator state
     // - Clear monitoring resources
-    
-    console.log('Risk monitoring stopped');
+
+    console.log("Risk monitoring stopped");
   }
 
   /**
@@ -77,8 +76,8 @@ export class RiskMonitor {
     // - Calculate risk values
     // - Update indicator history
     // - Analyze trends
-    
-    throw new Error('RiskMonitor.collectRiskIndicators not yet implemented');
+
+    throw new Error("RiskMonitor.collectRiskIndicators not yet implemented");
   }
 
   /**
@@ -87,7 +86,7 @@ export class RiskMonitor {
   async updateIndicator(
     indicatorId: string,
     value: number,
-    context?: string
+    context?: string,
   ): Promise<void> {
     this.ensureInitialized();
 
@@ -96,8 +95,8 @@ export class RiskMonitor {
     // - Add to history
     // - Calculate trend
     // - Check thresholds
-    
-    console.log('Risk indicator updated:', indicatorId, 'value:', value);
+
+    console.log("Risk indicator updated:", indicatorId, "value:", value);
   }
 
   /**
@@ -110,7 +109,7 @@ export class RiskMonitor {
     // - Get indicator from storage
     // - Update if stale
     // - Return current state
-    
+
     return this.indicators.get(indicatorId) || null;
   }
 
@@ -124,7 +123,7 @@ export class RiskMonitor {
     // - Get all indicators
     // - Update stale indicators
     // - Return current states
-    
+
     return Array.from(this.indicators.values());
   }
 
@@ -133,7 +132,7 @@ export class RiskMonitor {
    */
   async calculateTrend(
     indicatorId: string,
-    timeWindow: number = 3600000 // 1 hour in ms
+    timeWindow: number = 3600000, // 1 hour in ms
   ): Promise<TrendDirection> {
     this.ensureInitialized();
 
@@ -142,8 +141,8 @@ export class RiskMonitor {
     // - Calculate trend direction
     // - Assess trend strength
     // - Return trend direction
-    
-    throw new Error('calculateTrend not yet implemented');
+
+    throw new Error("calculateTrend not yet implemented");
   }
 
   /**
@@ -161,8 +160,8 @@ export class RiskMonitor {
     // - Compare against thresholds
     // - Determine severity level
     // - Generate alert message
-    
-    throw new Error('checkThreshold not yet implemented');
+
+    throw new Error("checkThreshold not yet implemented");
   }
 
   /**
@@ -170,7 +169,7 @@ export class RiskMonitor {
    */
   async getRiskHistory(
     indicatorId: string,
-    timeRange: { start: Date; end: Date }
+    timeRange: { start: Date; end: Date },
   ): Promise<RiskDataPoint[]> {
     this.ensureInitialized();
 
@@ -178,8 +177,8 @@ export class RiskMonitor {
     // - Query historical data
     // - Filter by time range
     // - Return data points
-    
-    throw new Error('getRiskHistory not yet implemented');
+
+    throw new Error("getRiskHistory not yet implemented");
   }
 
   /**
@@ -191,7 +190,7 @@ export class RiskMonitor {
 
   private ensureInitialized(): void {
     if (!this.isInitialized) {
-      throw new Error('RiskMonitor must be initialized before use');
+      throw new Error("RiskMonitor must be initialized before use");
     }
   }
 }

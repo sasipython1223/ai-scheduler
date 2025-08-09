@@ -1,27 +1,27 @@
 /**
  * Module 7.4 - Monitoring Utilities
- * 
+ *
  * Purpose: Utility functions for risk monitoring and data collection
- * 
+ *
  * @author AI Scheduler Development Team
  * @version 1.0.0
  */
 
 import type {
-  Schedule,
-  RiskIndicator,
+  RiskCategory,
   RiskDataPoint,
-  TrendDirection,
+  RiskIndicator,
   RiskSeverity,
-  RiskCategory
-} from '../shared-types';
+  Schedule,
+  TrendDirection,
+} from "../shared-types";
 
 /**
  * Monitor real-time risk indicators
  */
 export async function monitorRealTimeIndicators(
   schedule: Schedule,
-  indicators: RiskIndicator[]
+  indicators: RiskIndicator[],
 ): Promise<RiskIndicator[]> {
   // TODO: Implement real-time monitoring
   // - Collect current metric values
@@ -29,23 +29,23 @@ export async function monitorRealTimeIndicators(
   // - Calculate trends
   // - Check thresholds
   // - Return updated indicators
-  
-  throw new Error('monitorRealTimeIndicators not yet implemented');
+
+  throw new Error("monitorRealTimeIndicators not yet implemented");
 }
 
 /**
  * Collect risk metrics from schedule
  */
 export async function collectRiskMetrics(
-  schedule: Schedule
+  schedule: Schedule,
 ): Promise<Record<string, number>> {
   // TODO: Implement metric collection
   // - Extract schedule metrics
   // - Calculate derived metrics
   // - Assess risk indicators
   // - Return metric values
-  
-  throw new Error('collectRiskMetrics not yet implemented');
+
+  throw new Error("collectRiskMetrics not yet implemented");
 }
 
 /**
@@ -53,40 +53,38 @@ export async function collectRiskMetrics(
  */
 export async function calculateRiskTrend(
   indicator: RiskIndicator,
-  timeWindow: number = 3600000 // 1 hour in milliseconds
+  timeWindow: number = 3600000, // 1 hour in milliseconds
 ): Promise<TrendDirection> {
   if (!indicator.history || indicator.history.length < 2) {
-    return 'stable';
+    return "stable";
   }
 
   const now = new Date();
   const cutoffTime = new Date(now.getTime() - timeWindow);
-  
+
   // Filter recent data points
   const recentData = indicator.history.filter(
-    point => point.timestamp >= cutoffTime
+    (point) => point.timestamp >= cutoffTime,
   );
 
   if (recentData.length < 2) {
-    return 'stable';
+    return "stable";
   }
 
   // Calculate trend using linear regression
   const trend = calculateLinearTrend(recentData);
-  
+
   if (Math.abs(trend.slope) < 0.01) {
-    return 'stable';
+    return "stable";
   }
-  
-  return trend.slope > 0 ? 'degrading' : 'improving';
+
+  return trend.slope > 0 ? "degrading" : "improving";
 }
 
 /**
  * Check if indicator exceeds threshold
  */
-export function checkIndicatorThreshold(
-  indicator: RiskIndicator
-): {
+export function checkIndicatorThreshold(indicator: RiskIndicator): {
   exceeded: boolean;
   severity: RiskSeverity;
   message: string;
@@ -97,29 +95,29 @@ export function checkIndicatorThreshold(
   if (value <= threshold) {
     return {
       exceeded: false,
-      severity: 'info',
-      message: `${indicator.metric} is within normal range (${value.toFixed(2)})`
+      severity: "info",
+      message: `${indicator.metric} is within normal range (${value.toFixed(2)})`,
     };
   }
 
   // Determine severity based on how much threshold is exceeded
   const exceedanceRatio = value / threshold;
   let severity: RiskSeverity;
-  
+
   if (exceedanceRatio < 1.2) {
-    severity = 'low';
+    severity = "low";
   } else if (exceedanceRatio < 1.5) {
-    severity = 'medium';
+    severity = "medium";
   } else if (exceedanceRatio < 2.0) {
-    severity = 'high';
+    severity = "high";
   } else {
-    severity = 'critical';
+    severity = "critical";
   }
 
   return {
     exceeded: true,
     severity,
-    message: `${indicator.metric} exceeded threshold: ${value.toFixed(2)} > ${threshold.toFixed(2)} (${((exceedanceRatio - 1) * 100).toFixed(1)}% over)`
+    message: `${indicator.metric} exceeded threshold: ${value.toFixed(2)} > ${threshold.toFixed(2)} (${((exceedanceRatio - 1) * 100).toFixed(1)}% over)`,
   };
 }
 
@@ -129,16 +127,16 @@ export function checkIndicatorThreshold(
 export function updateIndicatorHistory(
   indicator: RiskIndicator,
   value: number,
-  context?: string
+  context?: string,
 ): RiskIndicator {
   const newDataPoint: RiskDataPoint = {
     timestamp: new Date(),
     value,
-    context
+    context,
   };
 
   const updatedHistory = [...(indicator.history || []), newDataPoint];
-  
+
   // Keep only recent history (last 100 data points)
   const maxHistoryLength = 100;
   if (updatedHistory.length > maxHistoryLength) {
@@ -150,7 +148,7 @@ export function updateIndicatorHistory(
     currentValue: value,
     lastUpdate: new Date(),
     history: updatedHistory,
-    trend: calculateTrendFromHistory(updatedHistory)
+    trend: calculateTrendFromHistory(updatedHistory),
   };
 }
 
@@ -162,30 +160,30 @@ export function createRiskIndicator(
   metric: string,
   currentValue: number,
   threshold: number,
-  category: RiskCategory
+  category: RiskCategory,
 ): RiskIndicator {
   return {
     id,
     metric,
     currentValue,
     threshold,
-    trend: 'stable',
-    severity: 'info',
+    trend: "stable",
+    severity: "info",
     category,
     lastUpdate: new Date(),
-    history: [{
-      timestamp: new Date(),
-      value: currentValue
-    }]
+    history: [
+      {
+        timestamp: new Date(),
+        value: currentValue,
+      },
+    ],
   };
 }
 
 /**
  * Calculate indicator statistics
  */
-export function calculateIndicatorStatistics(
-  indicator: RiskIndicator
-): {
+export function calculateIndicatorStatistics(indicator: RiskIndicator): {
   mean: number;
   median: number;
   standardDeviation: number;
@@ -200,22 +198,24 @@ export function calculateIndicatorStatistics(
       standardDeviation: 0,
       min: indicator.currentValue,
       max: indicator.currentValue,
-      volatility: 0
+      volatility: 0,
     };
   }
 
-  const values = indicator.history.map(point => point.value);
-  
+  const values = indicator.history.map((point) => point.value);
+
   const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
   const sortedValues = [...values].sort((a, b) => a - b);
   const median = sortedValues[Math.floor(sortedValues.length / 2)];
-  
-  const variance = values.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / values.length;
+
+  const variance =
+    values.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) /
+    values.length;
   const standardDeviation = Math.sqrt(variance);
-  
+
   const min = Math.min(...values);
   const max = Math.max(...values);
-  
+
   // Volatility as coefficient of variation
   const volatility = mean > 0 ? standardDeviation / mean : 0;
 
@@ -225,7 +225,7 @@ export function calculateIndicatorStatistics(
     standardDeviation,
     min,
     max,
-    volatility
+    volatility,
   };
 }
 
@@ -234,7 +234,7 @@ export function calculateIndicatorStatistics(
  */
 export function detectAnomalies(
   indicator: RiskIndicator,
-  threshold: number = 2.0 // Number of standard deviations
+  threshold: number = 2.0, // Number of standard deviations
 ): RiskDataPoint[] {
   if (!indicator.history || indicator.history.length < 3) {
     return [];
@@ -258,17 +258,24 @@ export function detectAnomalies(
  */
 export function calculateIndicatorCorrelation(
   indicator1: RiskIndicator,
-  indicator2: RiskIndicator
+  indicator2: RiskIndicator,
 ): number {
-  if (!indicator1.history || !indicator2.history || 
-      indicator1.history.length === 0 || indicator2.history.length === 0) {
+  if (
+    !indicator1.history ||
+    !indicator2.history ||
+    indicator1.history.length === 0 ||
+    indicator2.history.length === 0
+  ) {
     return 0;
   }
 
   // Align data points by timestamp (simplified - assumes same sampling)
-  const minLength = Math.min(indicator1.history.length, indicator2.history.length);
-  const values1 = indicator1.history.slice(-minLength).map(p => p.value);
-  const values2 = indicator2.history.slice(-minLength).map(p => p.value);
+  const minLength = Math.min(
+    indicator1.history.length,
+    indicator2.history.length,
+  );
+  const values1 = indicator1.history.slice(-minLength).map((p) => p.value);
+  const values2 = indicator2.history.slice(-minLength).map((p) => p.value);
 
   return calculatePearsonCorrelation(values1, values2);
 }
@@ -276,18 +283,16 @@ export function calculateIndicatorCorrelation(
 /**
  * Generate monitoring alerts
  */
-export function generateMonitoringAlerts(
-  indicators: RiskIndicator[]
-): Array<{
+export function generateMonitoringAlerts(indicators: RiskIndicator[]): Array<{
   indicatorId: string;
-  alertType: 'threshold' | 'trend' | 'anomaly';
+  alertType: "threshold" | "trend" | "anomaly";
   severity: RiskSeverity;
   message: string;
   timestamp: Date;
 }> {
   const alerts: Array<{
     indicatorId: string;
-    alertType: 'threshold' | 'trend' | 'anomaly';
+    alertType: "threshold" | "trend" | "anomaly";
     severity: RiskSeverity;
     message: string;
     timestamp: Date;
@@ -299,21 +304,21 @@ export function generateMonitoringAlerts(
     if (thresholdCheck.exceeded) {
       alerts.push({
         indicatorId: indicator.id,
-        alertType: 'threshold',
+        alertType: "threshold",
         severity: thresholdCheck.severity,
         message: thresholdCheck.message,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
 
     // Check for degrading trends
-    if (indicator.trend === 'degrading') {
+    if (indicator.trend === "degrading") {
       alerts.push({
         indicatorId: indicator.id,
-        alertType: 'trend',
-        severity: 'medium',
+        alertType: "trend",
+        severity: "medium",
         message: `${indicator.metric} is showing a degrading trend`,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
 
@@ -322,10 +327,10 @@ export function generateMonitoringAlerts(
     if (anomalies.length > 0) {
       alerts.push({
         indicatorId: indicator.id,
-        alertType: 'anomaly',
-        severity: 'medium',
+        alertType: "anomaly",
+        severity: "medium",
         message: `${indicator.metric} has ${anomalies.length} anomalous data points`,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
   }
@@ -340,15 +345,18 @@ export function generateMonitoringAlerts(
 /**
  * Calculate linear trend from data points
  */
-function calculateLinearTrend(dataPoints: RiskDataPoint[]): { slope: number; intercept: number } {
+function calculateLinearTrend(dataPoints: RiskDataPoint[]): {
+  slope: number;
+  intercept: number;
+} {
   if (dataPoints.length < 2) {
     return { slope: 0, intercept: 0 };
   }
 
   // Convert timestamps to numeric values (time since first point)
   const baseTime = dataPoints[0].timestamp.getTime();
-  const x = dataPoints.map(p => (p.timestamp.getTime() - baseTime) / 1000); // seconds
-  const y = dataPoints.map(p => p.value);
+  const x = dataPoints.map((p) => (p.timestamp.getTime() - baseTime) / 1000); // seconds
+  const y = dataPoints.map((p) => p.value);
 
   const n = x.length;
   const sumX = x.reduce((sum, val) => sum + val, 0);
@@ -367,16 +375,16 @@ function calculateLinearTrend(dataPoints: RiskDataPoint[]): { slope: number; int
  */
 function calculateTrendFromHistory(history: RiskDataPoint[]): TrendDirection {
   if (history.length < 2) {
-    return 'stable';
+    return "stable";
   }
 
   const trend = calculateLinearTrend(history.slice(-10)); // Last 10 points
-  
+
   if (Math.abs(trend.slope) < 0.01) {
-    return 'stable';
+    return "stable";
   }
-  
-  return trend.slope > 0 ? 'degrading' : 'improving';
+
+  return trend.slope > 0 ? "degrading" : "improving";
 }
 
 /**
@@ -395,7 +403,9 @@ function calculatePearsonCorrelation(x: number[], y: number[]): number {
   const sumYY = y.reduce((sum, val) => sum + val * val, 0);
 
   const numerator = n * sumXY - sumX * sumY;
-  const denominator = Math.sqrt((n * sumXX - sumX * sumX) * (n * sumYY - sumY * sumY));
+  const denominator = Math.sqrt(
+    (n * sumXX - sumX * sumX) * (n * sumYY - sumY * sumY),
+  );
 
   return denominator === 0 ? 0 : numerator / denominator;
 }

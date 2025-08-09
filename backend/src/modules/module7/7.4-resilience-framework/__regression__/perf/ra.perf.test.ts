@@ -1,5 +1,5 @@
-import { ResilienceAnalyzer } from '../../7.4.1-resilience-analyzer/resilience-analyzer';
-import { Schedule, Task, Resource } from '../../shared-types';
+import { ResilienceAnalyzer } from "../../7.4.1-resilience-analyzer/resilience-analyzer";
+import { Resource, Schedule, Task } from "../../shared-types";
 
 function buildSyntheticSchedule(taskCount: number): Schedule {
   const tasks: Task[] = [];
@@ -40,14 +40,14 @@ function buildSyntheticSchedule(taskCount: number): Schedule {
     metadata: {
       createdAt: new Date(),
       lastModified: new Date(),
-      version: '1.0.0',
+      version: "1.0.0",
       complexity: taskCount / 100,
-      riskLevel: 'medium'
-    }
+      riskLevel: "medium",
+    },
   };
 }
 
-test('analyze 1k tasks < 10ms', () => {
+test("analyze 1k tasks < 10ms", () => {
   const ra = new ResilienceAnalyzer();
   const sched = buildSyntheticSchedule(1000);
   const t0 = performance.now();
