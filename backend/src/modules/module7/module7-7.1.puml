@@ -1,0 +1,62 @@
+@startuml Module7-1-ConstraintAwareEngine
+title Module 7.1 - Constraint-Aware Engine
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+
+package "Constraint-Aware Engine" {
+  class ConstraintAwareScheduler {
+    +executeConstraintAwareScheduling(input: ConstraintSchedulingInput): Promise<ConstraintSchedulingResult>
+    +optimizeScheduleWithConstraints(candidate: ScheduleGraph, options: OptimizeOptions): Promise<ScheduleGraph>
+    +validateScheduleConstraints(schedule: ScheduleGraph): Promise<ValidationReport>
+    --
+    -scheduleEngine: ScheduleEngine
+    -constraintEvaluator: ConstraintEvaluator
+    -optimizer: ScheduleOptimizer
+  }
+
+  class ConstraintEvaluator {
+    +evaluateConstraintsRealTime(schedule: ScheduleGraph): Promise<ValidationReport>
+    +calculateConstraintImpact(schedule: ScheduleGraph): Promise<ImpactSummary>
+    --
+    -validationEngine: ValidationEngine
+  }
+
+  class ScheduleOptimizer {
+    +applyOptimizationStrategies(schedule: ScheduleGraph, options: OptimizeOptions): Promise<ScheduleGraph>
+    +generateAlternativeSchedules(schedule: ScheduleGraph, k: number): AsyncIterable<ScheduleGraph>
+    +optimizeForConstraints(schedule: ScheduleGraph, options: OptimizeOptions): Promise<ScheduleGraph>
+    --
+    -strategies: OptimizationStrategy[]
+  }
+
+  interface OptimizationStrategy {
+    +name: string
+    +tryImprove(schedule: ScheduleGraph, report: ValidationReport, ctx: StrategyContext): Promise<{ improved: boolean, schedule: ScheduleGraph }>
+  }
+
+  class BaselineStrategy implements OptimizationStrategy {
+    +name: string
+    +tryImprove(schedule: ScheduleGraph, report: ValidationReport, ctx: StrategyContext): Promise<{ improved: boolean, schedule: ScheduleGraph }>
+  }
+}
+
+package "Module 5 - Schedule Engine" {
+  interface ScheduleEngine {
+    +calculateSchedule(tasks: Task[], opts: Object): Promise<ScheduleGraph>
+  }
+}
+
+package "Module 6 - Constraint System" {
+  interface ValidationEngine {
+    +validate(schedule: ScheduleGraph): Promise<ValidationReport>
+  }
+}
+
+ConstraintAwareScheduler --> ConstraintEvaluator : uses
+ConstraintAwareScheduler --> ScheduleOptimizer : uses
+ConstraintAwareScheduler --> ScheduleEngine : calls
+ConstraintEvaluator --> ValidationEngine : delegates
+ScheduleOptimizer --> OptimizationStrategy : composes
+BaselineStrategy -up-|> OptimizationStrategy
+@enduml
