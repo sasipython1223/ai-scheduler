@@ -1,0 +1,186 @@
+@startuml Module7-ConstraintAwareScheduling
+
+title Module 7 - Constraint-Aware Scheduling System
+
+note as N0
+Intelligent Schedule Optimization with Real-Time Constraint Integration
+end note
+
+package "Module 7 - Constraint-Aware Scheduling" {
+
+    package "7.1 - Constraint Engine" #LightCyan {
+        class ConstraintAwareScheduler {
+            +executeConstraintAwareScheduling()
+            +optimizeScheduleWithConstraints()
+            +validateScheduleConstraints()
+            --
+            -scheduleEngine: ScheduleEngine
+            -constraintEvaluator: ConstraintEvaluator
+            -optimizer: ScheduleOptimizer
+        }
+
+        class ConstraintEvaluator {
+            +evaluateConstraintsRealTime()
+            +identifyViolationRisks()
+            +calculateConstraintImpact()
+            --
+            -validationEngine: ValidationEngine
+            -riskAnalyzer: RiskAnalyzer
+        }
+
+        class ScheduleOptimizer {
+            +optimizeForConstraints()
+            +generateAlternativeSchedules()
+            +applyOptimizationStrategies()
+            --
+            -algorithms: OptimizationAlgorithm[]
+            -constraints: ConstraintSet
+        }
+    }
+
+    package "7.2 - Intelligent Optimization" #LightGreen {
+        class OptimizationAlgorithms {
+            +geneticAlgorithmOptimization()
+            +simulatedAnnealingOptimization()
+            +constraintSatisfactionSolver()
+            --
+            -populationSize: number
+            -mutationRate: number
+            -coolingSchedule: Function
+        }
+
+        class ConstraintSolver {
+            +solveConstraintNetwork()
+            +findOptimalSolution()
+            +handleConstraintConflicts()
+            --
+            -constraintGraph: Graph
+            -solutionSpace: SearchSpace
+        }
+
+        class MLOptimization {
+            +predictOptimalSchedule()
+            +learnConstraintPatterns()
+            +adaptToHistoricalData()
+            --
+            -neuralNetwork: NeuralNetwork
+            -trainingData: HistoricalData[]
+        }
+    }
+
+    package "7.3 - Resource Integration" #LightYellow {
+        class ResourceConstraintManager {
+            +manageResourceConstraints()
+            +validateResourceAvailability()
+            +optimizeResourceAllocation()
+            --
+            -resourcePool: Resource[]
+            -constraints: ResourceConstraint[]
+        }
+
+        class SkillBasedAllocation {
+            +allocateBySkillConstraints()
+            +matchSkillRequirements()
+            +optimizeSkillUtilization()
+            --
+            -skillMatrix: SkillMatrix
+            -requirements: SkillRequirement[]
+        }
+
+        class ResourceLeveling {
+            +levelResourcesWithConstraints()
+            +minimizeResourceConflicts()
+            +balanceResourceWorkload()
+            --
+            -levelingAlgorithm: LevelingStrategy
+            -constraints: ResourceConstraint[]
+        }
+    }
+
+    package "7.4 - Resilience Framework" #LightPink {
+        class ResilienceAnalyzer {
+            +analyzeScheduleResilience()
+            +calculateRobustnessScore()
+            +identifyVulnerabilities()
+            --
+            -metrics: ResilienceMetric[]
+            -scenarios: RiskScenario[]
+        }
+
+        class ContingencyPlanner {
+            +generateContingencyPlans()
+            +createScheduleAlternatives()
+            +planConstraintMitigation()
+            --
+            -scenarios: ContingencyScenario[]
+            -plans: ContingencyPlan[]
+        }
+
+        class RiskManager {
+            +assessConstraintRisks()
+            +monitorRiskIndicators()
+            +executeRiskMitigation()
+            --
+            -riskModel: RiskModel
+            -mitigationStrategies: Strategy[]
+        }
+    }
+}
+
+package "External Dependencies" #LightGray {
+    class "Module 5\nSchedule Engine" {
+        +calculateSchedule()
+        +manageDependencies()
+        +handleWorkingDays()
+    }
+
+    class "Module 6\nConstraint System" {
+        +validateConstraints()
+        +reportViolations()
+        +suggestFixes()
+    }
+
+    class "Optimization Libraries" {
+        +OR-Tools
+        +TensorFlow.js
+        +WebAssembly
+    }
+}
+
+' Relationships
+ConstraintAwareScheduler --> ConstraintEvaluator : uses
+ConstraintAwareScheduler --> ScheduleOptimizer : uses
+ConstraintEvaluator --> "Module 6\nConstraint System" : integrates
+ScheduleOptimizer --> OptimizationAlgorithms : uses
+ScheduleOptimizer --> ConstraintSolver : uses
+OptimizationAlgorithms --> "Optimization Libraries" : leverages
+MLOptimization --> "Optimization Libraries" : uses
+ResourceConstraintManager --> SkillBasedAllocation : coordinates
+ResourceConstraintManager --> ResourceLeveling : coordinates
+ResilienceAnalyzer --> ContingencyPlanner : informs
+ResilienceAnalyzer --> RiskManager : collaborates
+ConstraintAwareScheduler --> "Module 5\nSchedule Engine" : extends
+
+' Additional Notes
+note top of ConstraintAwareScheduler
+    **Primary Entry Point**
+    Orchestrates constraint-aware
+    scheduling process with real-time
+    constraint evaluation and optimization
+end note
+
+note right of OptimizationAlgorithms
+    **Advanced Algorithms**
+    Genetic algorithms, simulated annealing,
+    and ML-driven optimization for
+    complex constraint scenarios
+end note
+
+note bottom of ResilienceAnalyzer
+    **Schedule Resilience**
+    Analyzes schedule robustness and
+    generates contingency plans for
+    constraint uncertainty scenarios
+end note
+
+@enduml

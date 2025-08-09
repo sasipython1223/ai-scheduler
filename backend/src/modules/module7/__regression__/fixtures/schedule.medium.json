@@ -1,0 +1,146 @@
+{
+  "tasks": [
+    {
+      "id": "epic-1-task-1",
+      "name": "User Authentication Module",
+      "duration": 32,
+      "skillRequirements": ["React", "Node.js", "Security"],
+      "priority": "critical",
+      "dependencies": []
+    },
+    {
+      "id": "epic-1-task-2",
+      "name": "Dashboard Frontend",
+      "duration": 40,
+      "skillRequirements": ["React", "TypeScript", "UI/UX"],
+      "priority": "high",
+      "dependencies": ["epic-1-task-1"]
+    },
+    {
+      "id": "epic-1-task-3",
+      "name": "Real-time Notifications",
+      "duration": 24,
+      "skillRequirements": ["WebSockets", "Node.js"],
+      "priority": "high",
+      "dependencies": ["epic-1-task-1"]
+    },
+    {
+      "id": "epic-2-task-1",
+      "name": "Data Analytics Engine",
+      "duration": 48,
+      "skillRequirements": ["Python", "Machine Learning", "PostgreSQL"],
+      "priority": "high",
+      "dependencies": []
+    },
+    {
+      "id": "epic-2-task-2",
+      "name": "Reporting Dashboard",
+      "duration": 32,
+      "skillRequirements": ["React", "Data Visualization"],
+      "priority": "medium",
+      "dependencies": ["epic-2-task-1", "epic-1-task-2"]
+    },
+    {
+      "id": "epic-3-task-1",
+      "name": "Mobile App MVP",
+      "duration": 60,
+      "skillRequirements": ["React Native", "Mobile Development"],
+      "priority": "medium",
+      "dependencies": ["epic-1-task-1"]
+    },
+    {
+      "id": "epic-3-task-2",
+      "name": "API Gateway",
+      "duration": 28,
+      "skillRequirements": ["Node.js", "API Design", "Security"],
+      "priority": "high",
+      "dependencies": ["epic-1-task-1"]
+    },
+    {
+      "id": "performance-optimization",
+      "duration": 36,
+      "skillRequirements": ["Performance Tuning", "Database Optimization"],
+      "priority": "low",
+      "dependencies": ["epic-2-task-1", "epic-3-task-2"]
+    },
+    {
+      "id": "integration-testing",
+      "duration": 44,
+      "skillRequirements": ["Testing", "Jest", "Cypress"],
+      "priority": "medium",
+      "dependencies": ["epic-1-task-2", "epic-2-task-2", "epic-3-task-1"]
+    },
+    {
+      "id": "deployment-pipeline",
+      "duration": 20,
+      "skillRequirements": ["DevOps", "CI/CD", "Docker"],
+      "priority": "high",
+      "dependencies": ["integration-testing"]
+    }
+  ],
+  "resources": [
+    {
+      "id": "senior-dev-1",
+      "name": "Alex Senior Frontend",
+      "skills": ["React", "TypeScript", "UI/UX", "Performance Tuning"],
+      "capacity": 8,
+      "hourlyRate": 95
+    },
+    {
+      "id": "senior-dev-2",
+      "name": "Jordan Senior Backend",
+      "skills": ["Node.js", "API Design", "Security", "Database Optimization"],
+      "capacity": 8,
+      "hourlyRate": 100
+    },
+    {
+      "id": "mid-dev-1",
+      "name": "Sam Mid-level Fullstack",
+      "skills": ["React", "Node.js", "Testing"],
+      "capacity": 8,
+      "hourlyRate": 70
+    },
+    {
+      "id": "mid-dev-2",
+      "name": "Taylor Data Engineer",
+      "skills": ["Python", "Machine Learning", "PostgreSQL"],
+      "capacity": 7,
+      "hourlyRate": 85
+    },
+    {
+      "id": "mobile-dev",
+      "name": "Casey Mobile Developer",
+      "skills": ["React Native", "Mobile Development"],
+      "capacity": 8,
+      "hourlyRate": 80
+    },
+    {
+      "id": "qa-engineer",
+      "name": "Morgan QA Engineer",
+      "skills": ["Testing", "Jest", "Cypress"],
+      "capacity": 8,
+      "hourlyRate": 65
+    },
+    {
+      "id": "devops-engineer",
+      "name": "Riley DevOps Engineer",
+      "skills": ["DevOps", "CI/CD", "Docker"],
+      "capacity": 6,
+      "hourlyRate": 90
+    },
+    {
+      "id": "ux-designer",
+      "name": "Avery UX Designer",
+      "skills": ["UI/UX", "Data Visualization"],
+      "capacity": 6,
+      "hourlyRate": 75
+    },
+    {
+      "id": "websocket-specialist",
+      "name": "Quinn WebSocket Specialist",
+      "skills": ["WebSockets", "Node.js", "Performance Tuning"],
+      "capacity": 8,
+      "hourlyRate": 85
+    }
+  ]
+}

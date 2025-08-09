@@ -1,0 +1,36 @@
+{
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "roots": ["<rootDir>/src"],
+  "testMatch": [
+    "**/__tests__/**/*.ts",
+    "**/__regression__/**/*.test.ts",
+    "**/?(*.)+(spec|test).ts"
+  ],
+  "testPathIgnorePatterns": ["/node_modules/", "/dist/"],
+  "transform": {
+    "^.+\\.ts$": "ts-jest"
+  },
+  "collectCoverageFrom": [
+    "src/**/*.ts",
+    "!src/**/*.d.ts",
+    "!src/**/__tests__/**",
+    "!src/**/__regression__/**",
+    "!src/**/fixtures/**"
+  ],
+  "coverageThreshold": {
+    "global": {
+      "lines": 85,
+      "statements": 85,
+      "branches": 75,
+      "functions": 85
+    }
+  },
+  "testTimeout": 30000,
+  "maxWorkers": 1,
+  "verbose": true,
+  "setupFilesAfterEnv": ["<rootDir>/src/test-setup.ts"],
+  "moduleNameMapper": {
+    "^@/(.*)$": "<rootDir>/src/$1"
+  }
+}

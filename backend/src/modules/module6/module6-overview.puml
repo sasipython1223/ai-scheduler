@@ -1,0 +1,87 @@
+/**
+ * Module 6: Constraint Optimizer - Architecture Overview
+ * Clean Architecture - AI Scheduler
+ * 
+ * PlantUML Component Diagram
+ * Purpose: Show relationships between constraint modules (6.1–6.4) and Schedule Engine (5.x)
+ */
+
+@startuml Module6-ConstraintOptimizer-Architecture
+
+!define RECTANGLE class
+
+' UI Layer (Frontend)
+package "Frontend (Module 6.4)" {
+  [Task Table] as TaskTable
+  [Constraint Feedback UI] as FeedbackUI
+  [useConstraints Hook] as ConstraintsHook
+}
+
+' Backend Services
+package "Backend Services" {
+  [Schedule Engine (Module 5.x)] as ScheduleEngine
+}
+
+' Module 6 Components
+package "Module 6: Constraint Optimizer" {
+  
+  package "6.1 Constraint Types" {
+    [Constraint Types] as Types
+    [Constraint Models] as Models
+    [Constraint Templates] as Templates
+  }
+  
+  package "6.2 Validation Engine" {
+    [Constraint Validator] as Validator
+    [Violation Reporter] as Reporter
+  }
+  
+  package "6.3 Integration" {
+    [Constraint Optimizer] as Optimizer
+    [Constraint Propagator] as Propagator
+  }
+}
+
+' Data Flow Connections
+TaskTable --> FeedbackUI : constraint violations
+FeedbackUI --> ConstraintsHook : violation data
+ConstraintsHook --> Optimizer : validation requests
+
+Optimizer --> Validator : task validation
+Optimizer --> ScheduleEngine : schedule recalculation
+Optimizer --> Propagator : change propagation
+
+Validator --> Models : constraint rules
+Validator --> Reporter : violation logging
+Models --> Types : type definitions
+Models --> Templates : built-in constraints
+
+ScheduleEngine --> Optimizer : updated schedule
+Propagator --> ScheduleEngine : constraint-aware updates
+
+' Notes
+note right of Optimizer
+  Core integration point:
+  - Validates constraints
+  - Applies CPM calculations
+  - Resolves violations
+  - Feeds back to UI
+end note
+
+note left of FeedbackUI
+  Real-time constraint feedback:
+  - Error indicators per task
+  - Violation tooltips
+  - Quick fix suggestions
+  - Resolution guidance
+end note
+
+note bottom of Types
+  Reusable constraint definitions:
+  - Hard/Soft/Calendar constraints
+  - Date/Duration/Resource rules
+  - Violation severity levels
+  - Validation parameters
+end note
+
+@enduml

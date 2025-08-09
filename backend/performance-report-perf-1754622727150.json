@@ -1,0 +1,59 @@
+{
+  "testRun": {
+    "id": "perf-1754622727150",
+    "startTime": "2025-08-08T03:12:07.150Z",
+    "endTime": "2025-08-08T03:12:07.435Z",
+    "duration": 285
+  },
+  "scenarios": [
+    {
+      "taskCount": 1000,
+      "dependencyCount": 999,
+      "complexity": "simple",
+      "executionTimeMs": 11.069999999999709,
+      "memoryUsageMB": 4.342369079589844,
+      "memoryPeakMB": 4.342094421386719,
+      "throughputTasksPerSecond": 90334.23667570247,
+      "isValidResult": true,
+      "errorCount": 0,
+      "timestamp": "2025-08-08T03:12:07.215Z",
+      "nodeVersion": "v20.13.1",
+      "platform": "win32"
+    },
+    {
+      "taskCount": 5000,
+      "dependencyCount": 4999,
+      "complexity": "simple",
+      "executionTimeMs": 70.20129999999972,
+      "memoryUsageMB": 12.540481567382812,
+      "memoryPeakMB": 12.540206909179688,
+      "throughputTasksPerSecond": 71223.7522666962,
+      "isValidResult": true,
+      "errorCount": 0,
+      "timestamp": "2025-08-08T03:12:07.309Z",
+      "nodeVersion": "v20.13.1",
+      "platform": "win32"
+    },
+    {
+      "taskCount": 10000,
+      "dependencyCount": 9999,
+      "complexity": "simple",
+      "executionTimeMs": 101.62559999999985,
+      "memoryUsageMB": 26.52722930908203,
+      "memoryPeakMB": 26.526954650878906,
+      "throughputTasksPerSecond": 98400.40304805104,
+      "isValidResult": true,
+      "errorCount": 0,
+      "timestamp": "2025-08-08T03:12:07.429Z",
+      "nodeVersion": "v20.13.1",
+      "platform": "win32"
+    }
+  ],
+  "summary": {
+    "totalTests": 3,
+    "passedTests": 3,
+    "failedTests": 0,
+    "averageExecutionTime": 60.965633333333095,
+    "totalMemoryUsed": 43.41007995605469
+  }
+}

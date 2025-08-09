@@ -1,0 +1,136 @@
+{
+  "skills": [
+    {
+      "id": "React",
+      "category": "Frontend",
+      "level": "framework",
+      "prerequisites": ["JavaScript", "TypeScript"]
+    },
+    {
+      "id": "TypeScript",
+      "category": "Programming Language",
+      "level": "language",
+      "prerequisites": ["JavaScript"]
+    },
+    {
+      "id": "Node.js",
+      "category": "Backend",
+      "level": "runtime",
+      "prerequisites": ["JavaScript"]
+    },
+    {
+      "id": "PostgreSQL",
+      "category": "Database",
+      "level": "technology",
+      "prerequisites": ["SQL"]
+    },
+    {
+      "id": "API Design",
+      "category": "Architecture",
+      "level": "skill",
+      "prerequisites": ["REST", "HTTP"]
+    },
+    {
+      "id": "Testing",
+      "category": "Quality Assurance",
+      "level": "skill",
+      "prerequisites": []
+    },
+    {
+      "id": "Jest",
+      "category": "Testing Framework",
+      "level": "tool",
+      "prerequisites": ["Testing", "JavaScript"]
+    },
+    {
+      "id": "DevOps",
+      "category": "Operations",
+      "level": "discipline",
+      "prerequisites": ["CI/CD"]
+    },
+    {
+      "id": "Docker",
+      "category": "Containerization",
+      "level": "tool",
+      "prerequisites": ["DevOps"]
+    },
+    {
+      "id": "Security",
+      "category": "Security",
+      "level": "discipline",
+      "prerequisites": []
+    },
+    {
+      "id": "Machine Learning",
+      "category": "AI/ML",
+      "level": "discipline",
+      "prerequisites": ["Python", "Statistics"]
+    },
+    {
+      "id": "Python",
+      "category": "Programming Language",
+      "level": "language",
+      "prerequisites": []
+    },
+    {
+      "id": "WebSockets",
+      "category": "Real-time Communication",
+      "level": "technology",
+      "prerequisites": ["JavaScript"]
+    },
+    {
+      "id": "React Native",
+      "category": "Mobile Development",
+      "level": "framework",
+      "prerequisites": ["React", "Mobile Development"]
+    },
+    {
+      "id": "Mobile Development",
+      "category": "Platform",
+      "level": "discipline",
+      "prerequisites": []
+    },
+    {
+      "id": "UI/UX",
+      "category": "Design",
+      "level": "discipline",
+      "prerequisites": []
+    },
+    {
+      "id": "Data Visualization",
+      "category": "Data",
+      "level": "skill",
+      "prerequisites": ["UI/UX"]
+    },
+    {
+      "id": "Performance Tuning",
+      "category": "Optimization",
+      "level": "skill",
+      "prerequisites": []
+    },
+    {
+      "id": "Database Optimization",
+      "category": "Database",
+      "level": "skill",
+      "prerequisites": ["PostgreSQL"]
+    },
+    {
+      "id": "CI/CD",
+      "category": "DevOps",
+      "level": "practice",
+      "prerequisites": []
+    },
+    {
+      "id": "Cypress",
+      "category": "Testing Framework",
+      "level": "tool",
+      "prerequisites": ["Testing"]
+    },
+    {
+      "id": "Database Design",
+      "category": "Database",
+      "level": "skill",
+      "prerequisites": ["SQL"]
+    }
+  ]
+}

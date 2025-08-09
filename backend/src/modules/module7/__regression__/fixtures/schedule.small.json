@@ -1,0 +1,67 @@
+{
+  "tasks": [
+    {
+      "id": "task-1",
+      "name": "Frontend Setup",
+      "duration": 8,
+      "skillRequirements": ["React", "TypeScript"],
+      "priority": "high",
+      "dependencies": []
+    },
+    {
+      "id": "task-2",
+      "name": "API Design",
+      "duration": 16,
+      "skillRequirements": ["Node.js", "API Design"],
+      "priority": "high",
+      "dependencies": []
+    },
+    {
+      "id": "task-3",
+      "name": "Database Schema",
+      "duration": 12,
+      "skillRequirements": ["PostgreSQL", "Database Design"],
+      "priority": "medium",
+      "dependencies": []
+    },
+    {
+      "id": "task-4",
+      "name": "Integration Tests",
+      "duration": 20,
+      "skillRequirements": ["Testing", "Jest"],
+      "priority": "medium",
+      "dependencies": ["task-1", "task-2", "task-3"]
+    },
+    {
+      "id": "task-5",
+      "name": "Deployment Setup",
+      "duration": 6,
+      "skillRequirements": ["DevOps", "Docker"],
+      "priority": "low",
+      "dependencies": ["task-4"]
+    }
+  ],
+  "resources": [
+    {
+      "id": "dev-1",
+      "name": "Alice Frontend",
+      "skills": ["React", "TypeScript", "Testing"],
+      "capacity": 8,
+      "hourlyRate": 75
+    },
+    {
+      "id": "dev-2",
+      "name": "Bob Backend",
+      "skills": ["Node.js", "API Design", "PostgreSQL"],
+      "capacity": 8,
+      "hourlyRate": 80
+    },
+    {
+      "id": "dev-3",
+      "name": "Carol DevOps",
+      "skills": ["DevOps", "Docker", "Database Design"],
+      "capacity": 6,
+      "hourlyRate": 90
+    }
+  ]
+}

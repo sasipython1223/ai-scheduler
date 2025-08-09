@@ -9,7 +9,7 @@ export const CAP_MARGIN = 0.02; // 2% capacity headroom for stress scenarios (pr
 
 // Leveling algorithm weights
 export const LEVELING_ALPHA = 0.5; // Load ratio penalty weight
-export const LEVELING_BETA = 0.1;  // Above-median load penalty weight
+export const LEVELING_BETA = 0.1; // Above-median load penalty weight
 
 // Performance budgets
 export const POST_REPAIR_BUDGET_MS = 20; // Time budget for post-pass repair
@@ -39,5 +39,5 @@ export const getDefaultConfig = (): ModuleConfig => ({
   levelingAlpha: LEVELING_ALPHA,
   levelingBeta: LEVELING_BETA,
   postRepairBudgetMs: POST_REPAIR_BUDGET_MS,
-  varianceThreshold: VARIANCE_IMPROVEMENT_THRESHOLD
+  varianceThreshold: VARIANCE_IMPROVEMENT_THRESHOLD,
 });

@@ -1,0 +1,34 @@
+{
+  "calendars": [
+    {
+      "resourceId": "dev-1",
+      "blackoutDays": ["2025-08-15", "2025-08-22"],
+      "reducedCapacityDays": [
+        {
+          "date": "2025-08-14",
+          "capacity": 4
+        }
+      ]
+    },
+    {
+      "resourceId": "dev-2",
+      "blackoutDays": ["2025-08-20", "2025-08-21"],
+      "reducedCapacityDays": []
+    },
+    {
+      "resourceId": "dev-3",
+      "blackoutDays": [],
+      "reducedCapacityDays": [
+        {
+          "date": "2025-08-16",
+          "capacity": 3
+        },
+        {
+          "date": "2025-08-17",
+          "capacity": 3
+        }
+      ]
+    }
+  ],
+  "publicHolidays": ["2025-09-01", "2025-12-25", "2025-12-26"]
+}

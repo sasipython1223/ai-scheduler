@@ -1,106 +1,106 @@
-name: Module 7.x CI Gate
+name: "Module 7.x CI Gate"
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   module7-gate:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [18.x, 20.x]
-    
+
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-        cache-dependency-path: backend/package-lock.json
-        
-    - name: Install dependencies
-      working-directory: ./backend
-      run: npm ci
-      
-    - name: Build TypeScript
-      working-directory: ./backend
-      run: npm run build
-      
-    - name: Run CI Invariant Tests
-      working-directory: ./backend
-      run: npm run test:ci
-      env:
-        CI: true
-        
-    - name: Run Performance Benchmarks
-      working-directory: ./backend
-      run: npm run bench:7x
-      
-    - name: Check for capacity violations
-      working-directory: ./backend
-      run: |
-        # Run core regression tests and check for capacity violations
-        npm run test:e2e 2>&1 | tee test-output.log
-        if grep -q "maxOverPct.*[1-9]" test-output.log; then
-          echo "❌ CI GATE FAILURE: Capacity violations detected"
-          exit 1
-        fi
-        echo "✅ No capacity violations found"
-        
-    - name: Performance regression check
-      working-directory: ./backend
-      run: |
-        # Run benchmark and check for SLA violations
-        npm run bench:7x 2>&1 | tee bench-output.log
-        if grep -q "SLA compliance: [0-8][0-9]" bench-output.log; then
-          echo "❌ CI GATE FAILURE: Performance regression detected (SLA < 90%)"
-          exit 1
-        fi
-        echo "✅ Performance benchmarks within SLA"
-        
-    - name: Upload test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: module7-test-results-${{ matrix.node-version }}
-        path: |
-          backend/test-output.log
-          backend/bench-output.log
-          backend/coverage/
-        retention-days: 7
-        
-    - name: Comment PR with results
-      if: github.event_name == 'pull_request' && matrix.node-version == '18.x'
-      uses: actions/github-script@v7
-      with:
-        script: |
-          const fs = require('fs');
-          try {
-            const benchOutput = fs.readFileSync('./backend/bench-output.log', 'utf8');
-            const body = `## 📊 Module 7.x Performance Report
-            
-            \`\`\`
-            ${benchOutput}
-            \`\`\`
-            
-            🛡️ **Capacity Safety**: Zero overallocation tolerance enforced
-            ⚡ **Performance**: SLA compliance validated  
-            🎯 **Leveling**: Variance reduction working optimally
-            `;
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: body
-            });
-          } catch (error) {
-            console.log('Could not post benchmark results:', error);
-          }
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Build TypeScript
+        working-directory: ./backend
+        run: npm run build
+
+      - name: Run CI Invariant Tests
+        working-directory: ./backend
+        run: npm run test:ci
+        env:
+          CI: true
+
+      - name: Run Performance Benchmarks
+        working-directory: ./backend
+        run: npm run bench:7x
+
+      - name: Check for capacity violations
+        working-directory: ./backend
+        run: |
+          # Run core regression tests and check for capacity violations
+          npm run test:e2e 2>&1 | tee test-output.log
+          if grep -q "maxOverPct.*[1-9]" test-output.log; then
+            echo "❌ CI GATE FAILURE: Capacity violations detected"
+            exit 1
+          fi
+          echo "✅ No capacity violations found"
+
+      - name: Performance regression check
+        working-directory: ./backend
+        run: |
+          # Run benchmark and check for SLA violations
+          npm run bench:7x 2>&1 | tee bench-output.log
+          if grep -q "SLA compliance: [0-8][0-9]" bench-output.log; then
+            echo "❌ CI GATE FAILURE: Performance regression detected (SLA < 90%)"
+            exit 1
+          fi
+          echo "✅ Performance benchmarks within SLA"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: module7-test-results-${{ matrix.node-version }}
+          path: |
+            backend/test-output.log
+            backend/bench-output.log
+            backend/coverage/
+          retention-days: 7
+
+      - name: Comment PR with results
+        if: github.event_name == 'pull_request' && matrix.node-version == '18.x'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            try {
+              const benchOutput = fs.readFileSync('./backend/bench-output.log', 'utf8');
+              const body = `## 📊 Module 7.x Performance Report
+              
+              \`\`\`
+              ${benchOutput}
+              \`\`\`
+              
+              🛡️ **Capacity Safety**: Zero overallocation tolerance enforced
+              ⚡ **Performance**: SLA compliance validated  
+              🎯 **Leveling**: Variance reduction working optimally
+              `;
+              
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+              });
+            } catch (error) {
+              console.log('Could not post benchmark results:', error);
+            }

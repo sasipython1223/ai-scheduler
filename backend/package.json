@@ -15,7 +15,7 @@
     "test:e2e": "jest --runInBand src/modules/module7/__regression__/e2e",
     "test:ci": "jest --runInBand src/modules/module7/__regression__/ci && jest --runInBand src/modules/module7/__regression__/perf/perf.snapshot.test.ts",
     "test:module7": "npm run test:reg && npm run test:perf",
-    "bench:7x": "node scripts/bench.mjs",
+    "bench:7x": "node scripts/bench-simple.mjs",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix"
   },

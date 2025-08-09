@@ -1,0 +1,26 @@
+{
+  "metadata": {
+    "description": "Large scale test fixture with ~1000 tasks and 150 resources",
+    "generatedAt": "2025-08-09T12:00:00Z",
+    "taskCount": 1000,
+    "resourceCount": 150,
+    "timespan": "20 days"
+  },
+  "note": "This is a placeholder file. The actual large dataset is generated dynamically by the makeData() function with parameters { tasks: 1000, resources: 150, days: 20 } to avoid storing massive JSON files in the repository.",
+  "usage": "Use makeData({ tasks: 1000, resources: 150, days: 20 }) in tests to generate the large dataset.",
+  "sampleTask": {
+    "id": "enterprise-task-1",
+    "name": "Large Scale Project Component",
+    "duration": 24,
+    "skillRequirements": ["React", "Node.js", "PostgreSQL"],
+    "priority": "high",
+    "dependencies": ["prerequisite-task-1", "prerequisite-task-2"]
+  },
+  "sampleResource": {
+    "id": "enterprise-dev-1",
+    "name": "Senior Enterprise Developer",
+    "skills": ["React", "Node.js", "PostgreSQL", "AWS", "Docker"],
+    "capacity": 8,
+    "hourlyRate": 120
+  }
+}
