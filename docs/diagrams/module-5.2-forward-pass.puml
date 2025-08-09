@@ -1,0 +1,196 @@
+@startuml Module52ForwardPass
+!theme cerulean-outline
+title Module 5.2: CPM Forward Pass Architecture & Data Flow
+
+package "CPM Forward Pass Engine" as FP {
+  
+  package "Core Algorithm" as Core {
+    class ForwardPassEngine {
+      +tasks: Task[]
+      +dependencies: LogicLink[]
+      +projectStartDate: Date
+      +calendarId: string
+      --
+      +execute(): ForwardPassResult
+      +processTasksTopologically(): void
+      +calculateEarlyDates(task: Task): void
+      +handleLogicTypes(task: Task, predecessors: Task[]): void
+      -validateInputs(): void
+      -sortTasksTopologically(): Task[]
+    }
+    
+    class CPMDateCalculator {
+      +calculateEarlyStart(task: Task, predecessors: Task[]): Date
+      +calculateEarlyFinish(task: Task): Date
+      +applyLogicTypeConstraints(logic: LogicLinkType, pred: Task, succ: Task, lag: number): Date
+      +handleConstraints(task: Task, calculatedDate: Date): Date
+      --
+      -calculateFS(pred: Task, lag: number): Date
+      -calculateSS(pred: Task, lag: number): Date
+      -calculateFF(pred: Task, succ: Task, lag: number): Date
+      -calculateSF(pred: Task, succ: Task, lag: number): Date
+    }
+    
+    class CPMDependencyProcessor {
+      +buildSuccessorMap(dependencies: LogicLink[]): Map<string, LogicLink[]>
+      +buildPredecessorMap(dependencies: LogicLink[]): Map<string, LogicLink[]>
+      +getImmediatePredecessors(taskId: string): LogicLink[]
+      +validateDependencyNetwork(tasks: Task[], deps: LogicLink[]): ValidationResult
+      --
+      -detectCircularDependencies(): string[]
+      -validateLogicTypes(): ValidationResult
+    }
+    
+    class CPMConstraintCalculations {
+      +applyTaskConstraints(task: Task, calculatedDate: Date): Date
+      +validateConstraintFeasibility(task: Task): ValidationResult
+      +resolveConstraintConflicts(task: Task, earlyDate: Date): Date
+      --
+      -handleASAP(task: Task, date: Date): Date
+      -handleSNET(task: Task, date: Date): Date
+      -handleMSO(task: Task, date: Date): Date
+    }
+  }
+  
+  package "Supporting Services" as Support {
+    class GraphUtils {
+      +topologicalSort(tasks: Task[], deps: LogicLink[]): Task[]
+      +detectCycles(graph: DependencyGraph): string[]
+      +buildAdjacencyList(deps: LogicLink[]): Map<string, string[]>
+      +validateGraphStructure(graph: DependencyGraph): boolean
+    }
+    
+    class DateUtils {
+      +addWorkingDays(date: Date, days: number, calendarId: string): Date
+      +calculateWorkingDaysBetween(start: Date, end: Date, calendarId: string): number
+      +isWorkingDay(date: Date, calendarId: string): boolean
+      +adjustToWorkingDay(date: Date, calendarId: string): Date
+    }
+    
+    class WorkingDaysCalculator {
+      +calendarId: string
+      +holidays: Holiday[]
+      +workingDays: WeekDay[]
+      --
+      +calculateDuration(start: Date, end: Date): number
+      +addDuration(start: Date, duration: number): Date
+      +getNextWorkingDay(date: Date): Date
+    }
+  }
+  
+  package "Result Types" as Results {
+    class ForwardPassResult {
+      +success: boolean
+      +tasksWithEarlyDates: Task[]
+      +projectEarlyFinish: Date
+      +criticalPathLength: number
+      +errors: string[]
+      +warnings: string[]
+      +processingTime: number
+    }
+    
+    class TaskDateInfo {
+      +taskId: string
+      +earlyStart: Date
+      +earlyFinish: Date
+      +duration: number
+      +predecessorCount: number
+      +constraints: TaskConstraint[]
+    }
+  }
+}
+
+package "Input Data" as Input {
+  class ScheduleInputData {
+    +projectStartDate: Date
+    +tasks: TaskInput[]
+    +dependencies: LogicLinkInput[]
+    +calendarId: string
+    +constraints: ProjectConstraint[]
+  }
+  
+  class TaskInput {
+    +id: string
+    +name: string
+    +duration: number
+    +constraints: TaskConstraint[]
+    +wbsCode?: string
+  }
+  
+  class LogicLinkInput {
+    +id: string
+    +predecessorId: string
+    +successorId: string
+    +type: LogicLinkType
+    +lag: number
+  }
+}
+
+package "Integration Points" as Integration {
+  class CPMForwardPassService {
+    +executeForwardPass(input: ScheduleInputData): ForwardPassResult
+    +validateInputData(input: ScheduleInputData): ValidationResult
+    +getProcessingMetrics(): ProcessingMetrics
+  }
+  
+  interface IForwardPassEngine {
+    +execute(): ForwardPassResult
+  }
+  
+  class ForwardPassValidator {
+    +validateTasks(tasks: Task[]): ValidationResult
+    +validateDependencies(deps: LogicLink[]): ValidationResult
+    +validateCalendar(calendarId: string): ValidationResult
+  }
+}
+
+' Relationships
+ForwardPassEngine ||--o{ CPMDateCalculator : "uses"
+ForwardPassEngine ||--o{ CPMDependencyProcessor : "uses"
+ForwardPassEngine ||--o{ CPMConstraintCalculations : "uses"
+ForwardPassEngine ||--o{ GraphUtils : "uses"
+
+CPMDateCalculator ||--o{ DateUtils : "uses"
+CPMDateCalculator ||--o{ WorkingDaysCalculator : "uses"
+
+CPMForwardPassService ||--|| ForwardPassEngine : "orchestrates"
+CPMForwardPassService ..> IForwardPassEngine : "implements"
+CPMForwardPassService ||--o{ ForwardPassValidator : "uses"
+
+ForwardPassEngine ..> ForwardPassResult : "produces"
+ForwardPassEngine ..> TaskDateInfo : "creates"
+
+ScheduleInputData ||--o{ TaskInput : "contains"
+ScheduleInputData ||--o{ LogicLinkInput : "contains"
+
+note right of ForwardPassEngine
+  Core algorithm that processes
+  tasks in topological order
+  calculating early start/finish dates
+end note
+
+note right of CPMDateCalculator
+  Handles all date calculations
+  for different logic types
+  and constraints
+end note
+
+note bottom of FP
+  Module 5.2 implements the forward pass
+  of the Critical Path Method, calculating
+  early start and finish dates for all tasks
+end note
+
+note as N1
+  **Forward Pass Algorithm:**
+  1. Validate input data
+  2. Sort tasks topologically
+  3. For each task in order:
+     - Calculate early start from predecessors
+     - Apply logic type constraints (FS/SS/FF/SF)
+     - Apply task constraints (SNET/MSO/etc)
+     - Calculate early finish
+  4. Return results with early dates
+end note
+
+@enduml

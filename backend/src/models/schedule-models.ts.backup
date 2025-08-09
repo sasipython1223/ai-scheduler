@@ -1,0 +1,452 @@
+/**
+ * Schedule Engine Models
+ * AI Scheduler - Module 5.1: Data Models
+ *
+ * Model classes and helper functions for schedule computation
+ */
+
+import {
+  CalculationOptions,
+  LogicLink,
+  ScheduleCalculationRequest,
+  ScheduledTask,
+  TaskInput,
+  TaskStatus,
+  ValidationResult,
+  WBSNode,
+  WBSStructure,
+} from '../types/scheduleTypes.js';
+
+// ============================================================================
+// TASK MODEL CLASS
+// ============================================================================
+
+/**
+ * Task model with validation and utility methods
+ */
+export class Task {
+  constructor(private taskData: TaskInput) {
+    this.validate();
+  }
+
+  /**
+   * Validate task input data
+   */
+  public validate(): ValidationResult[] {
+    const results: ValidationResult[] = [];
+
+    // Required fields validation
+    if (!this.taskData.id?.trim()) {
+      results.push({
+        field: 'id',
+        isValid: false,
+        message: 'Task ID is required',
+        severity: 'ERROR',
+      });
+    }
+
+    if (!this.taskData.name?.trim()) {
+      results.push({
+        field: 'name',
+        isValid: false,
+        message: 'Task name is required',
+        severity: 'ERROR',
+      });
+    }
+
+    if (this.taskData.duration <= 0) {
+      results.push({
+        field: 'duration',
+        isValid: false,
+        message: 'Duration must be greater than 0',
+        severity: 'ERROR',
+      });
+    }
+
+    // Date format validation
+    if (this.taskData.start && !this.isValidISODate(this.taskData.start)) {
+      results.push({
+        field: 'start',
+        isValid: false,
+        message: 'Start date must be valid ISO string',
+        severity: 'ERROR',
+      });
+    }
+
+    if (this.taskData.finish && !this.isValidISODate(this.taskData.finish)) {
+      results.push({
+        field: 'finish',
+        isValid: false,
+        message: 'Finish date must be valid ISO string',
+        severity: 'ERROR',
+      });
+    }
+
+    return results;
+  }
+
+  private isValidISODate(dateString: string): boolean {
+    const date = new Date(dateString);
+    return date instanceof Date && !isNaN(date.getTime());
+  }
+
+  /**
+   * Get task data
+   */
+  public getData(): TaskInput {
+    return { ...this.taskData };
+  }
+
+  /**
+   * Update task data
+   */
+  public update(updates: Partial<TaskInput>): void {
+    this.taskData = { ...this.taskData, ...updates };
+    this.validate();
+  }
+
+  /**
+   * Check if task has predecessors
+   */
+  public hasPredecessors(): boolean {
+    return Boolean(this.taskData.predecessors?.length);
+  }
+
+  /**
+   * Get duration in working days
+   */
+  public getDuration(): number {
+    return this.taskData.duration;
+  }
+
+  /**
+   * Get WBS level from WBS code
+   */
+  public getWBSLevel(): number {
+    if (!this.taskData.wbs) return 0;
+    return this.taskData.wbs.split('.').length;
+  }
+}
+
+// ============================================================================
+// LOGIC LINK MODEL CLASS
+// ============================================================================
+
+/**
+ * Logic link model with relationship validation
+ */
+export class LogicLinkModel {
+  constructor(private linkData: LogicLink) {
+    this.validate();
+  }
+
+  /**
+   * Validate logic link
+   */
+  public validate(): ValidationResult[] {
+    const results: ValidationResult[] = [];
+
+    if (!this.linkData.from?.trim()) {
+      results.push({
+        field: 'from',
+        isValid: false,
+        message: 'Predecessor task ID is required',
+        severity: 'ERROR',
+      });
+    }
+
+    if (!this.linkData.to?.trim()) {
+      results.push({
+        field: 'to',
+        isValid: false,
+        message: 'Successor task ID is required',
+        severity: 'ERROR',
+      });
+    }
+
+    if (this.linkData.from === this.linkData.to) {
+      results.push({
+        field: 'to',
+        isValid: false,
+        message: 'Task cannot be linked to itself',
+        severity: 'ERROR',
+      });
+    }
+
+    if (!Object.values(['FS', 'SS', 'FF', 'SF']).includes(this.linkData.type)) {
+      results.push({
+        field: 'type',
+        isValid: false,
+        message: 'Logic type must be FS, SS, FF, or SF',
+        severity: 'ERROR',
+      });
+    }
+
+    return results;
+  }
+
+  /**
+   * Get link data
+   */
+  public getData(): LogicLink {
+    return { ...this.linkData };
+  }
+
+  /**
+   * Check if this creates a circular dependency with given links
+   */
+  public static checkCircularDependency(
+    links: LogicLink[],
+    newLink: LogicLink
+  ): boolean {
+    // Build adjacency list
+    const graph = new Map<string, string[]>();
+
+    [...links, newLink].forEach((link) => {
+      if (!graph.has(link.from)) {
+        graph.set(link.from, []);
+      }
+      graph.get(link.from)!.push(link.to);
+    });
+
+    // DFS to detect cycles
+    const visited = new Set<string>();
+    const recursionStack = new Set<string>();
+
+    const hasCycle = (node: string): boolean => {
+      if (recursionStack.has(node)) return true;
+      if (visited.has(node)) return false;
+
+      visited.add(node);
+      recursionStack.add(node);
+
+      const neighbors = graph.get(node) || [];
+      for (const neighbor of neighbors) {
+        if (hasCycle(neighbor)) return true;
+      }
+
+      recursionStack.delete(node);
+      return false;
+    };
+
+    // Check all nodes
+    for (const node of graph.keys()) {
+      if (hasCycle(node)) return true;
+    }
+
+    return false;
+  }
+}
+
+// ============================================================================
+// WBS STRUCTURE MODEL
+// ============================================================================
+
+/**
+ * WBS structure with hierarchy management
+ */
+export class WBSManager {
+  private structure: WBSStructure;
+
+  constructor(projectCode: string) {
+    this.structure = {
+      projectCode,
+      nodes: new Map(),
+      maxLevel: 0,
+    };
+  }
+
+  /**
+   * Add WBS node
+   */
+  public addNode(node: WBSNode): void {
+    this.structure.nodes.set(node.code, node);
+    this.structure.maxLevel = Math.max(this.structure.maxLevel, node.level);
+
+    // Update parent's children array
+    if (node.parentCode) {
+      const parent = this.structure.nodes.get(node.parentCode);
+      if (parent) {
+        parent.children = parent.children || [];
+        if (!parent.children.includes(node.code)) {
+          parent.children.push(node.code);
+        }
+      }
+    }
+  }
+
+  /**
+   * Get node by code
+   */
+  public getNode(code: string): WBSNode | undefined {
+    return this.structure.nodes.get(code);
+  }
+
+  /**
+   * Get all children of a node
+   */
+  public getChildren(code: string): WBSNode[] {
+    const node = this.structure.nodes.get(code);
+    if (!node?.children) return [];
+
+    return node.children
+      .map((childCode) => this.structure.nodes.get(childCode))
+      .filter((child): child is WBSNode => child !== undefined);
+  }
+
+  /**
+   * Get WBS structure
+   */
+  public getStructure(): WBSStructure {
+    return {
+      ...this.structure,
+      nodes: new Map(this.structure.nodes),
+    };
+  }
+
+  /**
+   * Generate WBS code for new element
+   */
+  public generateChildCode(parentCode: string): string {
+    const parent = this.structure.nodes.get(parentCode);
+    if (!parent) throw new Error(`Parent WBS code ${parentCode} not found`);
+
+    const childCount = (parent.children?.length || 0) + 1;
+    return `${parentCode}.${childCount}`;
+  }
+}
+
+// ============================================================================
+// SCHEDULE CALCULATION HELPERS
+// ============================================================================
+
+/**
+ * Schedule calculation utilities
+ */
+export class ScheduleUtils {
+  /**
+   * Convert TaskInput to ScheduledTask with default values
+   */
+  public static createScheduledTask(input: TaskInput): ScheduledTask {
+    const now = new Date().toISOString();
+
+    return {
+      ...input,
+      earlyStart: input.start || now,
+      earlyFinish: input.finish || now,
+      lateStart: now,
+      lateFinish: now,
+      totalFloat: 0,
+      freeFloat: 0,
+      isCritical: false,
+      status: TaskStatus.NOT_STARTED,
+      percentComplete: 0,
+    };
+  }
+
+  /**
+   * Calculate working days between dates
+   */
+  public static calculateWorkingDays(start: string, finish: string): number {
+    const startDate = new Date(start);
+    const finishDate = new Date(finish);
+    let workingDays = 0;
+
+    const currentDate = new Date(startDate);
+    while (currentDate <= finishDate) {
+      const dayOfWeek = currentDate.getDay();
+      // Count Monday(1) through Friday(5) as working days
+      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+        workingDays++;
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return workingDays;
+  }
+
+  /**
+   * Add working days to a date
+   */
+  public static addWorkingDays(startDate: string, workingDays: number): string {
+    const date = new Date(startDate);
+    let daysAdded = 0;
+
+    while (daysAdded < workingDays) {
+      date.setDate(date.getDate() + 1);
+      const dayOfWeek = date.getDay();
+      // Count Monday(1) through Friday(5) as working days
+      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+        daysAdded++;
+      }
+    }
+
+    return date.toISOString();
+  }
+
+  /**
+   * Validate schedule calculation request
+   */
+  public static validateRequest(
+    request: ScheduleCalculationRequest
+  ): ValidationResult[] {
+    const results: ValidationResult[] = [];
+
+    if (!request.projectId?.trim()) {
+      results.push({
+        field: 'projectId',
+        isValid: false,
+        message: 'Project ID is required',
+        severity: 'ERROR',
+      });
+    }
+
+    if (!request.tasks?.length) {
+      results.push({
+        field: 'tasks',
+        isValid: false,
+        message: 'At least one task is required',
+        severity: 'ERROR',
+      });
+    }
+
+    // Validate individual tasks
+    request.tasks?.forEach((task, index) => {
+      const taskModel = new Task(task);
+      const taskResults = taskModel.validate();
+      results.push(
+        ...taskResults.map((r: ValidationResult) => ({
+          ...r,
+          field: `tasks[${index}].${r.field}`,
+        }))
+      );
+    });
+
+    // Validate logic links
+    request.logicLinks?.forEach((link, index) => {
+      const linkModel = new LogicLinkModel(link);
+      const linkResults = linkModel.validate();
+      results.push(
+        ...linkResults.map((r: ValidationResult) => ({
+          ...r,
+          field: `logicLinks[${index}].${r.field}`,
+        }))
+      );
+    });
+
+    return results;
+  }
+
+  /**
+   * Get default calculation options
+   */
+  public static getDefaultOptions(): CalculationOptions {
+    return {
+      includeFloat: true,
+      includeCriticalPath: true,
+      includeStatistics: true,
+      validateInput: true,
+      optimizePerformance: false,
+    };
+  }
+}

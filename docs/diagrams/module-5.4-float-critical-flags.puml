@@ -1,0 +1,248 @@
+@startuml Module54FloatCriticalFlags
+!theme cerulean-outline
+title Module 5.4: Calculate Float & Critical Path Flags Architecture
+
+package "Float & Critical Path Analysis Engine" as FCPE {
+  
+  package "Enhanced Float Calculator" as EFC {
+    class FloatCalculator {
+      +EPSILON: number = 0.001
+      +precisionConfig: PrecisionConfig
+      --
+      +calculateTotalFloat(task: Task, epsilon?: number): number
+      +calculateFreeFloat(task: Task, successors: Task[], epsilon?: number): number
+      +calculateBatchFloat(tasks: Task[]): FloatBatchResult
+      +validateFloatConsistency(task: Task): ValidationResult
+      +getFloatMetrics(tasks: Task[]): FloatMetrics
+      --
+      -handleEpsilonComparison(value1: number, value2: number): boolean
+      -validateFloatInputs(task: Task): ValidationResult
+      -optimizeFloatCalculation(tasks: Task[]): Task[]
+    }
+    
+    class PrecisionManager {
+      +defaultEpsilon: number
+      +customEpsilonRules: Map<string, number>
+      --
+      +getEpsilonForTask(task: Task): number
+      +configurePrecision(config: PrecisionConfig): void
+      +validatePrecisionSettings(): ValidationResult
+      +adjustForFloatingPoint(value: number): number
+    }
+    
+    class FloatValidationEngine {
+      +validateTotalFloat(task: Task): ValidationResult
+      +validateFreeFloat(task: Task, successors: Task[]): ValidationResult
+      +detectFloatAnomalies(tasks: Task[]): FloatAnomaly[]
+      +checkFloatConsistency(tasks: Task[]): ConsistencyReport
+    }
+  }
+  
+  package "Critical Path Analyzer" as CPA {
+    class CriticalPathAnalyzer {
+      +epsilon: number
+      +analyzerConfig: AnalyzerConfig
+      --
+      +identifyCriticalTasks(tasks: Task[]): CriticalTask[]
+      +buildCriticalPathSequences(tasks: Task[], deps: LogicLink[]): CriticalPath[]
+      +detectMultipleCriticalPaths(tasks: Task[]): CriticalPathSet[]
+      +calculateCriticalPathMetrics(paths: CriticalPath[]): PathMetrics
+      +validateCriticalPathContinuity(path: CriticalPath): ValidationResult
+      --
+      -isCritical(task: Task, epsilon: number): boolean
+      -orderCriticalSequence(tasks: Task[], deps: LogicLink[]): Task[]
+      -findPathConnections(criticalTasks: Task[]): PathConnection[]
+    }
+    
+    class PathSequenceValidator {
+      +validatePathContinuity(path: CriticalPath): boolean
+      +checkDependencyChain(tasks: Task[], deps: LogicLink[]): ValidationResult
+      +identifyPathBreaks(path: CriticalPath): PathBreak[]
+      +repairPathSequence(brokenPath: CriticalPath): CriticalPath
+    }
+    
+    class MultipleCriticalPathDetector {
+      +findAllCriticalPaths(tasks: Task[], deps: LogicLink[]): CriticalPathSet[]
+      +analyzeCriticalPathIntersections(paths: CriticalPathSet[]): PathIntersection[]
+      +calculatePathPriorities(paths: CriticalPathSet[]): PathPriority[]
+      +mergeSimilarPaths(paths: CriticalPathSet[]): CriticalPathSet[]
+    }
+  }
+  
+  package "Task Flag Assigner" as TFA {
+    class TaskFlagAssigner {
+      +assignmentConfig: FlagAssignmentConfig
+      +batchSize: number
+      --
+      +assignFloatFlags(tasks: Task[], floatData: FloatData[]): FlagAssignmentResult
+      +assignCriticalFlags(tasks: Task[], criticalData: CriticalData[]): FlagAssignmentResult
+      +performBatchFlagAssignment(taskBatches: Task[][]): BatchResult[]
+      +validateFlagAssignment(tasks: Task[]): ValidationResult
+      +updateTaskFlags(tasks: Task[], updates: FlagUpdate[]): UpdateResult
+      --
+      -assignSingleTaskFlags(task: Task, floatData: FloatData): void
+      -validateFlagConsistency(task: Task): ValidationResult
+      -optimizeBatchProcessing(tasks: Task[]): Task[][]
+    }
+    
+    class FlagConsistencyValidator {
+      +validateFlagState(task: Task): ValidationResult
+      +checkFlagLogicalConsistency(tasks: Task[]): ConsistencyReport
+      +detectFlagConflicts(tasks: Task[]): FlagConflict[]
+      +repairInconsistentFlags(task: Task): FlagRepairResult
+    }
+    
+    class BatchProcessor {
+      +processBatch(tasks: Task[], operation: BatchOperation): BatchResult
+      +optimizeBatchSize(totalTasks: number, memoryLimit: number): number
+      +monitorBatchPerformance(batch: Task[]): PerformanceMetrics
+      +handleBatchErrors(batch: Task[], errors: Error[]): ErrorHandlingResult
+    }
+  }
+  
+  package "Integration Services" as IS {
+    class Module54Service {
+      +floatCalculator: FloatCalculator
+      +criticalPathAnalyzer: CriticalPathAnalyzer
+      +taskFlagAssigner: TaskFlagAssigner
+      --
+      +executeCompleteAnalysis(input: Module54Input): Module54Result
+      +calculateFloatAndFlags(tasks: Task[]): FloatFlagResult
+      +generateCriticalPathReport(tasks: Task[]): CriticalPathReport
+      +validateInputData(input: Module54Input): ValidationResult
+      --
+      -orchestrateFloatCalculation(tasks: Task[]): FloatData[]
+      -orchestrateCriticalPathAnalysis(tasks: Task[]): CriticalData[]
+      -orchestrateFlagAssignment(tasks: Task[], floatData: FloatData[], criticalData: CriticalData[]): FlagAssignmentResult
+    }
+    
+    class ResultAggregator {
+      +aggregateFloatResults(results: FloatResult[]): AggregatedFloatResult
+      +aggregateCriticalPathResults(results: CriticalPathResult[]): AggregatedCriticalResult
+      +combineModuleResults(floatResult: FloatResult, criticalResult: CriticalPathResult): Module54Result
+      +generateSummaryMetrics(result: Module54Result): SummaryMetrics
+    }
+  }
+  
+  package "Data Types & Results" as DTR {
+    class Module54Input {
+      +tasks: Task[]
+      +dependencies: LogicLink[]
+      +forwardPassResult: ForwardPassResult
+      +backwardPassResult: BackwardPassResult
+      +analysisConfig: AnalysisConfig
+    }
+    
+    class Module54Result {
+      +tasksWithFlags: EnhancedTask[]
+      +criticalPathAnalysis: CriticalPathAnalysis
+      +floatAnalysis: FloatAnalysis
+      +performanceMetrics: PerformanceMetrics
+      +qualityMetrics: QualityMetrics
+      +processingTime: number
+      +success: boolean
+      +errors: string[]
+      +warnings: string[]
+    }
+    
+    class EnhancedTask {
+      +id: string
+      +name: string
+      +earlyStart: Date
+      +earlyFinish: Date
+      +lateStart: Date
+      +lateFinish: Date
+      +totalFloat: number
+      +freeFloat: number
+      +isCritical: boolean
+      +criticalPathId?: string
+      +floatRank: number
+      +riskLevel: RiskLevel
+    }
+    
+    class FloatData {
+      +taskId: string
+      +totalFloat: number
+      +freeFloat: number
+      +floatRank: number
+      +isNearCritical: boolean
+      +calculationMetadata: CalculationMetadata
+    }
+    
+    class CriticalData {
+      +taskId: string
+      +isCritical: boolean
+      +criticalPathId: string
+      +pathPosition: number
+      +criticalityScore: number
+      +pathMetrics: PathMetrics
+    }
+  }
+}
+
+' Relationships
+FloatCalculator ||--o{ PrecisionManager : "uses"
+FloatCalculator ||--o{ FloatValidationEngine : "uses"
+
+CriticalPathAnalyzer ||--o{ PathSequenceValidator : "uses"
+CriticalPathAnalyzer ||--o{ MultipleCriticalPathDetector : "uses"
+
+TaskFlagAssigner ||--o{ FlagConsistencyValidator : "uses"
+TaskFlagAssigner ||--o{ BatchProcessor : "uses"
+
+Module54Service ||--|| FloatCalculator : "orchestrates"
+Module54Service ||--|| CriticalPathAnalyzer : "orchestrates"
+Module54Service ||--|| TaskFlagAssigner : "orchestrates"
+Module54Service ||--o{ ResultAggregator : "uses"
+
+Module54Service ..> Module54Result : "produces"
+Module54Service ..> EnhancedTask : "creates"
+
+FloatCalculator ..> FloatData : "generates"
+CriticalPathAnalyzer ..> CriticalData : "generates"
+TaskFlagAssigner ..> EnhancedTask : "enhances"
+
+note right of FloatCalculator
+  Enhanced with modular design,
+  configurable epsilon precision,
+  and batch processing capabilities
+end note
+
+note right of CriticalPathAnalyzer
+  Dedicated service for critical path
+  detection with multiple path support
+  and sequence validation
+end note
+
+note right of TaskFlagAssigner
+  Centralized flag assignment with
+  batch processing and consistency
+  validation for large task networks
+end note
+
+note bottom of FCPE
+  Module 5.4 enhances tasks with accurate
+  totalFloat, freeFloat, and isCritical flags
+  using epsilon-based precision handling
+end note
+
+note as N1
+  **Module 5.4 Enhancement Process:**
+  1. Receive tasks with early/late dates from Modules 5.2/5.3
+  2. Calculate precise float values with epsilon handling
+  3. Identify critical tasks and build critical path sequences
+  4. Assign totalFloat, freeFloat, isCritical flags to tasks
+  5. Validate flag consistency and generate quality metrics
+  6. Return enhanced tasks ready for UI and AI integration
+end note
+
+note as N2
+  **Key Enhancements in Module 5.4:**
+  • Configurable epsilon precision (default: 0.001)
+  • Batch processing for large task networks
+  • Multiple critical path detection and analysis
+  • Comprehensive flag validation and consistency checking
+  • Performance optimization with O(V+E) complexity maintained
+end note
+
+@enduml

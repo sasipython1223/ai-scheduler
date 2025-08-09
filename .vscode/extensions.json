@@ -1,0 +1,19 @@
+// 🧠 Copilot: VS Code Extensions for AI Scheduler Full Stack Development
+// ✅ Essential extensions for React + TypeScript + Express + AI integration
+// ✅ Code quality: Prettier, ESLint, path intellisense
+// ✅ Frontend: Tailwind CSS, auto-rename-tag
+// ✅ Backend: TypeScript, JSON, npm scripts
+// ✅ AI/ML: Consider adding AI-specific extensions for future ML integrations
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "ms-vscode.vscode-typescript-next",
+    "ms-vscode.vscode-json",
+    "formulahendry.auto-rename-tag",
+    "christian-kohler.path-intellisense",
+    "ms-vscode.vscode-npm-script"
+  ],
+  "unwantedRecommendations": ["ms-vscode.vscode-typescript", "hookyqr.beautify"]
+}

@@ -1,0 +1,137 @@
+@startuml Module7-3-Integrate-Sequence
+!pragma useVerticalIf on
+title Module 7.3 – integrate() sequence
+
+skinparam shadowing false
+skinparam responseMessageBelowArrow true
+skinparam ParticipantPadding 10
+skinparam BoxPadding 8
+skinparam defaultFontName Consolas
+skinparam ArrowColor #555555
+skinparam NoteBackgroundColor #FFFFEE
+skinparam NoteBorderColor #C7C7A6
+
+actor Client
+participant "ResourceConstraintManager" as RCM
+participant "AvailabilityChecker" as AC
+participant "GreedySkillFit" as Greedy
+participant "MinimalLeveling" as Leveler
+participant "SkillBasedAllocation" as SBA
+collections "Module5_ScheduleData" as Mod5
+collections "Module6_ConstraintData" as Mod6
+
+== Entry ==
+Client -> RCM: integrate(input: ConstraintInput)
+activate RCM
+note right of RCM
+  Orchestration:
+  1) Validate & normalize input
+  2) Build availability matrix
+  3) Execute enabled strategies (ordered)
+  4) Apply leveling (optional)
+  5) Compute metrics & return
+end note
+
+== Load & validate ==
+RCM -> Mod5: read resources & tasks
+Mod5 --> RCM: Resource[], Task[]
+RCM -> Mod6: read hardCaps & flags
+Mod6 --> RCM: HardCaps, Flags
+RCM -> RCM: validateInput()\nmergeDefaults()\nstartTimer(timeBudgetMs)
+
+alt validation failed
+  RCM --> Client: IntegrationResult { status: "conflicts", violations }
+end
+
+== Availability ==
+RCM -> AC: buildAvailabilityMatrix(resources, calendars)
+activate AC
+loop for each resource
+  AC -> AC: getAvailability(resource, day)\nmergeCalendarOverrides()
+end
+AC --> RCM: AvailabilityMatrix
+deactivate AC
+
+== Strategy selection ==
+RCM -> RCM: strategies := selectStrategies(Flags)\n// e.g. [Greedy] or [Leveling] or [Hybrid]
+
+group Strategy Execution
+  alt ENABLE_GREEDY && !ENABLE_LEVELING
+    note over RCM: Pure Greedy Strategy
+    RCM -> Greedy: greedySkillFitStrategy(input)
+    activate Greedy
+    Greedy -> SBA: getBestSkillMatches(resources, task)
+    activate SBA
+    SBA --> Greedy: SkillMatch[]
+    deactivate SBA
+    loop for each task (duration desc order)
+      Greedy -> AC: getAvailability(resource, day)
+      AC --> Greedy: availableHours
+      Greedy -> Greedy: allocateTaskGreedy()\nupdateAssignments()
+    end
+    Greedy --> RCM: IntegrationResult
+    deactivate Greedy
+    
+  else ENABLE_LEVELING && !ENABLE_GREEDY
+    note over RCM: Pure Leveling Strategy
+    RCM -> Leveler: minimalLevelingStrategy(input)
+    activate Leveler
+    Leveler -> SBA: getBestSkillMatches(resources, task)
+    activate SBA
+    SBA --> Leveler: SkillMatch[]
+    deactivate SBA
+    loop for each task (duration asc order)
+      Leveler -> AC: getAvailability(resource, day)
+      AC --> Leveler: availableHours
+      Leveler -> Leveler: allocateTaskWithLeveling()\nfindLeastLoadedResource()
+    end
+    Leveler --> RCM: IntegrationResult
+    deactivate Leveler
+    
+  else ENABLE_GREEDY && ENABLE_LEVELING
+    note over RCM: Hybrid Strategy
+    RCM -> RCM: hybridStrategy(input, timeBudgetMs)
+    RCM -> Leveler: minimalLevelingStrategy(halfTimeBudget)
+    activate Leveler
+    Leveler --> RCM: levelingResult
+    deactivate Leveler
+    
+    opt levelingResult has violations && remainingTime > 100ms
+      RCM -> Greedy: greedySkillFitStrategy(remainingTimeBudget)
+      activate Greedy
+      Greedy --> RCM: greedyResult
+      deactivate Greedy
+      RCM -> RCM: chooseBetterResult(levelingResult, greedyResult)
+    end
+    
+  else no strategy enabled
+    note over RCM
+      No allocation strategy enabled;
+      return conflicts with violation
+    end note
+  end
+end group
+
+== Time budget guards ==
+RCM -> RCM: checkElapsedTime()
+opt elapsedMs > timeBudgetMs
+  RCM -> RCM: addViolation("Allocation exceeded time budget")
+end
+
+== Finalize ==
+RCM -> RCM: computeFinalMetrics()\nvalidateHardCaps(allocations)\nstopTimer()
+
+alt hardCaps violated
+  RCM -> RCM: status := "conflicts"
+  RCM -> RCM: addViolations(overallocationDetails)
+end
+
+RCM --> Client: IntegrationResult {\n  status: "ok"|"conflicts",\n  allocations: Allocation[],\n  violations: string[],\n  metrics: { elapsedMs, leveledVariance }\n}
+deactivate RCM
+
+note over Client, RCM
+  Performance Target: ≤500ms for 1000 tasks
+  Deterministic: Stable sort, tie-breaking by ID
+end note
+
+@enduml

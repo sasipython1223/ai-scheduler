@@ -1,0 +1,207 @@
+@startuml Module53BackwardPass
+!theme cerulean-outline
+title Module 5.3: CPM Backward Pass Architecture & Data Flow
+
+package "CPM Backward Pass Engine" as BP {
+  
+  package "Core Algorithm" as Core {
+    class BackwardPassEngine {
+      +tasks: Task[]
+      +dependencies: LogicLink[]
+      +projectEndDate: Date
+      +calendarId: string
+      +maxIterations: number
+      --
+      +execute(): BackwardPassResult
+      +processTasksReverseTopological(): void
+      +calculateLateDates(task: Task): void
+      +handleMultipleIterations(): void
+      +detectConvergence(): boolean
+      -validateInputs(): void
+      -sortTasksReverseTopologically(): Task[]
+    }
+    
+    class FloatCalculator {
+      +calculateTotalFloat(task: Task): number
+      +calculateFreeFloat(task: Task, successors: Task[]): number
+      +identifyProjectFloat(tasks: Task[]): FloatMap
+      +calculateAvailableFloat(task: Task, successor: Task): number
+      --
+      +EPSILON: number = 0.001
+      -isFloatSignificant(value: number): boolean
+      -validateFloatCalculation(task: Task): ValidationResult
+    }
+    
+    class GraphUtils {
+      +buildSuccessorMap(dependencies: LogicLink[]): Map<string, LogicLink[]>
+      +buildPredecessorMap(dependencies: LogicLink[]): Map<string, LogicLink[]>
+      +getReverseTopologicalOrder(tasks: Task[], deps: LogicLink[]): Task[]
+      +getTaskSuccessors(taskId: string): LogicLink[]
+      +validateGraphIntegrity(graph: DependencyGraph): boolean
+    }
+    
+    class DateUtils {
+      +subtractWorkingDays(date: Date, days: number, calendarId: string): Date
+      +calculateLateDatesWithConstraints(task: Task, baseDate: Date): TaskDates
+      +applyLateConstraints(task: Task, calculatedDate: Date): Date
+      +validateDateConsistency(task: Task): ValidationResult
+    }
+  }
+  
+  package "Critical Path Analysis" as Critical {
+    class CriticalPathIdentifier {
+      +identifyCriticalTasks(tasks: Task[]): Task[]
+      +buildCriticalPath(criticalTasks: Task[], deps: LogicLink[]): CriticalPath[]
+      +validateCriticalPathContinuity(path: CriticalPath[]): boolean
+      +findLongestPath(tasks: Task[], deps: LogicLink[]): PathInfo
+      --
+      +CRITICAL_THRESHOLD: number = 0.001
+      -isCritical(task: Task): boolean
+      -orderCriticalSequence(tasks: Task[]): Task[]
+    }
+    
+    class FloatAnalyzer {
+      +analyzeFloatDistribution(tasks: Task[]): FloatAnalysis
+      +identifyFloatBuffers(tasks: Task[]): FloatBuffer[]
+      +calculatePathFloats(paths: TaskPath[]): PathFloatInfo[]
+      +findNearCriticalTasks(tasks: Task[], threshold: number): Task[]
+    }
+  }
+  
+  package "Multi-Iteration Handling" as Iteration {
+    class IterationManager {
+      +currentIteration: number
+      +maxIterations: number
+      +convergenceThreshold: number
+      --
+      +shouldContinueIterating(): boolean
+      +trackChanges(previousTasks: Task[], currentTasks: Task[]): ChangeMetrics
+      +detectConvergence(changes: ChangeMetrics): boolean
+      +logIterationProgress(iteration: number, changes: ChangeMetrics): void
+    }
+    
+    class ChangeDetector {
+      +compareTaskDates(oldTask: Task, newTask: Task): DateChanges
+      +calculateDateDifference(date1: Date, date2: Date): number
+      +isSignificantChange(change: number): boolean
+      +summarizeChanges(allChanges: DateChanges[]): ChangeMetrics
+    }
+  }
+  
+  package "Result Types" as Results {
+    class BackwardPassResult {
+      +success: boolean
+      +tasksWithLateDates: Task[]
+      +criticalPath: Task[]
+      +totalFloatMap: Map<string, number>
+      +freeFloatMap: Map<string, number>
+      +projectTotalFloat: number
+      +iterations: number
+      +processingTime: number
+      +errors: string[]
+      +warnings: string[]
+    }
+    
+    class CriticalPathResult {
+      +criticalTasks: Task[]
+      +criticalPathDuration: number
+      +criticalPathSequence: string[]
+      +floatAnalysis: FloatAnalysis
+    }
+    
+    class FloatMap {
+      +taskId: string
+      +totalFloat: number
+      +freeFloat: number
+      +isCritical: boolean
+      +pathInfo: PathInfo
+    }
+  }
+}
+
+package "Integration with Forward Pass" as Integration {
+  class CPMBackwardPassService {
+    +executeBackwardPass(forwardPassResult: ForwardPassResult): BackwardPassResult
+    +calculateCriticalPath(): CriticalPathResult
+    +generateFloatReport(): FloatReport
+    --
+    -validateForwardPassData(data: ForwardPassResult): ValidationResult
+    -initializeFromForwardPass(data: ForwardPassResult): void
+  }
+  
+  interface IBackwardPassEngine {
+    +execute(): BackwardPassResult
+  }
+  
+  class BackwardPassValidator {
+    +validateForwardPassInput(input: ForwardPassResult): ValidationResult
+    +validateProjectEndDate(endDate: Date): ValidationResult
+    +validateTaskNetwork(tasks: Task[]): ValidationResult
+  }
+}
+
+' Relationships
+BackwardPassEngine ||--o{ FloatCalculator : "uses"
+BackwardPassEngine ||--o{ GraphUtils : "uses"
+BackwardPassEngine ||--o{ DateUtils : "uses"
+BackwardPassEngine ||--o{ IterationManager : "uses"
+
+FloatCalculator ||--o{ CriticalPathIdentifier : "coordinates with"
+FloatCalculator ||--o{ FloatAnalyzer : "uses"
+
+IterationManager ||--o{ ChangeDetector : "uses"
+
+CPMBackwardPassService ||--|| BackwardPassEngine : "orchestrates"
+CPMBackwardPassService ..> IBackwardPassEngine : "implements"
+CPMBackwardPassService ||--o{ BackwardPassValidator : "uses"
+
+BackwardPassEngine ..> BackwardPassResult : "produces"
+BackwardPassEngine ..> CriticalPathResult : "creates"
+BackwardPassEngine ..> FloatMap : "generates"
+
+note right of BackwardPassEngine
+  Core algorithm that processes
+  tasks in reverse topological order
+  calculating late start/finish dates
+end note
+
+note right of FloatCalculator
+  Calculates total and free float
+  for all tasks, identifies critical
+  tasks using epsilon comparison
+end note
+
+note right of IterationManager
+  Handles multi-iteration processing
+  for complex dependency networks
+  with convergence detection
+end note
+
+note bottom of BP
+  Module 5.3 implements the backward pass
+  of the Critical Path Method, calculating
+  late dates, float values, and critical path
+end note
+
+note as N1
+  **Backward Pass Algorithm:**
+  1. Start with project end date
+  2. Process tasks in reverse topological order
+  3. Multi-iteration processing:
+     - Calculate late finish from successors
+     - Apply logic type constraints
+     - Calculate late start from late finish
+     - Track changes for convergence
+  4. Calculate float values (total & free)
+  5. Identify critical path (zero float tasks)
+  6. Return complete results
+end note
+
+note as N2
+  **Float Calculations:**
+  • Total Float = Late Start - Early Start
+  • Free Float = min(Successor Early Start - Task Early Finish - Lag)
+  • Critical Task = Total Float ≤ 0.001 (epsilon)
+end note
+
+@enduml

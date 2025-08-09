@@ -1,0 +1,180 @@
+@startuml Module-5.1-Schedule-Data-Models
+!theme cerulean-outline
+title Module 5.1: Schedule Data Models Architecture
+
+package "Schedule Data Models" as SDM {
+  
+  package "Core Models" as Core {
+    class Task {
+      +id: string
+      +name: string
+      +duration: number
+      +startDate: Date
+      +finishDate: Date
+      +earlyStart?: Date
+      +earlyFinish?: Date
+      +lateStart?: Date
+      +lateFinish?: Date
+      +totalFloat?: number
+      +freeFloat?: number
+      +isCritical?: boolean
+      +constraints: TaskConstraint[]
+      +validate(): ValidationResult
+      +calculateDates(): void
+    }
+    
+    class LogicLink {
+      +id: string
+      +predecessorId: string
+      +successorId: string
+      +type: LogicLinkType
+      +lag: number
+      +validate(): ValidationResult
+      +isValidRelationship(): boolean
+    }
+    
+    class WBS {
+      +id: string
+      +code: string
+      +name: string
+      +level: number
+      +parentId?: string
+      +children: WBS[]
+      +tasks: Task[]
+      +getHierarchy(): WBSNode[]
+      +addChild(wbs: WBS): void
+    }
+    
+    class ScheduleEngine {
+      +projectId: string
+      +projectStartDate: Date
+      +projectEndDate?: Date
+      +calendarId: string
+      +tasks: Task[]
+      +dependencies: LogicLink[]
+      +wbsStructure: WBS[]
+      +runForwardPass(): ForwardPassResult
+      +runBackwardPass(): BackwardPassResult
+      +calculateCriticalPath(): CriticalPathResult
+    }
+  }
+  
+  package "Supporting Types" as Types {
+    enum LogicLinkType {
+      FS : Finish-to-Start
+      SS : Start-to-Start
+      FF : Finish-to-Finish
+      SF : Start-to-Finish
+    }
+    
+    enum TaskConstraint {
+      ASAP : As Soon As Possible
+      ALAP : As Late As Possible
+      SNET : Start No Earlier Than
+      SNLT : Start No Later Than
+      FNET : Finish No Earlier Than
+      FNLT : Finish No Later Than
+      MSO : Must Start On
+      MFO : Must Finish On
+    }
+    
+    class ValidationResult {
+      +isValid: boolean
+      +errors: string[]
+      +warnings: string[]
+    }
+  }
+  
+  package "Utilities" as Utils {
+    class DependencyUtil {
+      +validateDependencies(links: LogicLink[]): ValidationResult
+      +detectCircularDependencies(links: LogicLink[]): string[]
+      +buildDependencyGraph(links: LogicLink[]): DependencyGraph
+    }
+    
+    class WorkingDaysUtil {
+      +calculateWorkingDays(start: Date, end: Date, calendarId: string): number
+      +addWorkingDays(date: Date, days: number, calendarId: string): Date
+      +isWorkingDay(date: Date, calendarId: string): boolean
+    }
+    
+    class WBSParsingUtil {
+      +parseWBSCode(code: string): WBSLevel[]
+      +validateWBSStructure(wbs: WBS[]): ValidationResult
+      +buildWBSHierarchy(wbs: WBS[]): WBSTree
+    }
+  }
+}
+
+package "Database Layer" as DB {
+  class PrismaModels {
+    +Task: TaskModel
+    +LogicLink: LogicLinkModel
+    +WBS: WBSModel
+    +Calendar: CalendarModel
+    +Holiday: HolidayModel
+  }
+}
+
+package "API Layer" as API {
+  class TaskService {
+    +createTask(task: TaskInput): Task
+    +updateTask(id: string, updates: TaskUpdate): Task
+    +deleteTask(id: string): void
+    +getTasks(projectId: string): Task[]
+  }
+  
+  class ScheduleValidation {
+    +validateSchedule(schedule: ScheduleEngine): ValidationResult
+    +validateTaskNetwork(tasks: Task[], links: LogicLink[]): ValidationResult
+    +checkConstraintConflicts(tasks: Task[]): ValidationResult
+  }
+}
+
+' Relationships
+Task ||--o{ LogicLink : "predecessor/successor"
+Task }o--|| WBS : "belongs to"
+ScheduleEngine ||--o{ Task : "contains"
+ScheduleEngine ||--o{ LogicLink : "manages"
+ScheduleEngine ||--o{ WBS : "organizes"
+
+Task ..> TaskConstraint : "uses"
+LogicLink ..> LogicLinkType : "uses"
+Task ..> ValidationResult : "validates to"
+
+DependencyUtil ..> LogicLink : "validates"
+WorkingDaysUtil ..> Task : "calculates for"
+WBSParsingUtil ..> WBS : "parses"
+
+TaskService ..> Task : "manages"
+ScheduleValidation ..> ScheduleEngine : "validates"
+
+PrismaModels ..> Task : "persists"
+PrismaModels ..> LogicLink : "persists"
+PrismaModels ..> WBS : "persists"
+
+note right of Task
+  Core entity representing
+  project work packages
+  with scheduling attributes
+end note
+
+note right of LogicLink
+  Defines dependency
+  relationships between
+  tasks with logic types
+end note
+
+note right of ScheduleEngine
+  Main orchestrator for
+  schedule calculations
+  and CPM operations
+end note
+
+note bottom of SDM
+  Module 5.1 provides the foundational
+  data models and utilities for the
+  AI Scheduler CPM engine
+end note
+
+@enduml

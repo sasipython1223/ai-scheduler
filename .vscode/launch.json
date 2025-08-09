@@ -1,0 +1,101 @@
+// 🧠 Copilot: Clean Full Stack Debug Setup
+// ✅ React (Vite) frontend and Express (TypeScript) backend
+// ✅ Debug backend using ts-node/esm with --experimental-specifier-resolution=node
+// ✅ Add Launch Frontend Dev Server and Launch Backend Dev Server
+// ✅ Add compound: Launch Full Stack
+// ✅ Add attach config for backend on port 9229 and frontend on port 9222
+// ✅ Use internalConsoleOptions: "neverOpen" everywhere
+{
+  "version": "0.2.0",
+  "configurations": [
+    // 🔍 FRONTEND DEBUGGING IN CHROME
+    {
+      "name": "Debug Frontend (Chrome)",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173", // Vite dev server port
+      "webRoot": "${workspaceFolder}/frontend/src", // Maps source to dev tools
+      "sourceMaps": true,
+      "trace": true,
+      "preLaunchTask": "Launch Frontend Dev Server" // Ensures frontend server runs before debugging
+    },
+
+    // 🛠 BACKEND DEBUGGING (Node.js using ts-node)
+    {
+      "name": "Debug Backend (Node.js)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/src/index.ts", // TypeScript entry file
+      "outFiles": ["${workspaceFolder}/backend/dist/**/*.js"], // Needed for breakpoints to work
+      "runtimeArgs": [
+        "--loader",
+        "ts-node/esm",
+        "--experimental-specifier-resolution=node"
+      ], // Support TypeScript directly
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "cwd": "${workspaceFolder}/backend", // Set working dir to backend
+      "console": "integratedTerminal", // Use terminal for logs
+      "internalConsoleOptions": "neverOpen",
+      "preLaunchTask": "Launch Backend Dev Server" // Start dev server before debugging
+    },
+
+    // 🔗 ATTACH TO RUNNING BACKEND PROCESS
+    {
+      "name": "Attach to Backend Process",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "skipFiles": ["<node_internals>/**"],
+      "localRoot": "${workspaceFolder}/backend",
+      "remoteRoot": "${workspaceFolder}/backend",
+      "internalConsoleOptions": "neverOpen"
+    },
+
+    // 🔗 ATTACH TO RUNNING FRONTEND PROCESS
+    {
+      "name": "Attach to Frontend (Chrome)",
+      "type": "chrome",
+      "request": "attach",
+      "port": 9222,
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "sourceMaps": true,
+      "internalConsoleOptions": "neverOpen"
+    },
+
+    // 🚀 FRONTEND DEV SERVER (Vite)
+    {
+      "name": "Launch Frontend Dev Server",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "internalConsoleOptions": "neverOpen" // Don't auto-open debug console
+    },
+
+    // 🚀 BACKEND DEV SERVER (Node.js + ts-node)
+    {
+      "name": "Launch Backend Dev Server",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/backend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "internalConsoleOptions": "neverOpen"
+    }
+  ],
+
+  // 🧩 COMPOUND: LAUNCH BOTH TOGETHER
+  "compounds": [
+    {
+      "name": "Launch Full Stack",
+      "configurations": [
+        "Launch Frontend Dev Server",
+        "Launch Backend Dev Server"
+      ],
+      "stopAll": true // Stop both if one is terminated
+    }
+  ]
+}

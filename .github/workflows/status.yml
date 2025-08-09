@@ -1,0 +1,133 @@
+name: AI Scheduler - Module Status Tracking
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  track-progress:
+    runs-on: ubuntu-latest
+    name: Update Module Progress
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: |
+          cd frontend && npm ci
+          cd ../backend && npm ci
+
+      - name: Run code quality checks
+        run: |
+          cd frontend && npm run lint && npm run build
+          cd ../backend && npm run lint && npm run build
+
+      - name: Count lines of code
+        id: count-lines
+        run: |
+          frontend_lines=$(find frontend/src -name "*.ts" -o -name "*.tsx" | xargs wc -l | tail -1 | awk '{print $1}')
+          backend_lines=$(find backend/src -name "*.ts" | xargs wc -l | tail -1 | awk '{print $1}')
+          total_lines=$((frontend_lines + backend_lines))
+
+          echo "frontend_lines=$frontend_lines" >> $GITHUB_OUTPUT
+          echo "backend_lines=$backend_lines" >> $GITHUB_OUTPUT
+          echo "total_lines=$total_lines" >> $GITHUB_OUTPUT
+
+      - name: Update module status
+        run: |
+          echo "📊 Module Status Update"
+          echo "Frontend: ${{ steps.count-lines.outputs.frontend_lines }} lines"
+          echo "Backend: ${{ steps.count-lines.outputs.backend_lines }} lines"
+          echo "Total: ${{ steps.count-lines.outputs.total_lines }} lines"
+
+      - name: Check PlantUML diagrams
+        run: |
+          if [ -f "docs/diagrams/architecture.puml" ]; then
+            echo "✅ Architecture diagram exists"
+          fi
+          if [ -f "docs/diagrams/orchestrator-architecture.puml" ]; then
+            echo "✅ Orchestrator diagram exists"
+          fi
+          if [ -f "docs/ai/ai_agent_service_diagram.puml" ]; then
+            echo "✅ AI service diagram exists"
+          fi
+
+      - name: Validate project structure
+        run: |
+          echo "🔍 Validating project structure..."
+
+          # Check required directories
+          required_dirs=("frontend/src" "backend/src" "database/prisma" "docs" ".vscode")
+          for dir in "${required_dirs[@]}"; do
+            if [ -d "$dir" ]; then
+              echo "✅ $dir exists"
+            else
+              echo "❌ $dir missing"
+              exit 1
+            fi
+          done
+
+          # Check key files
+          required_files=(".vscode/settings.json" ".vscode/launch.json" ".vscode/tasks.json" "docs/AI-AGENT-OVERVIEW.md")
+          for file in "${required_files[@]}"; do
+            if [ -f "$file" ]; then
+              echo "✅ $file exists"
+            else
+              echo "❌ $file missing"
+            fi
+          done
+
+      - name: Generate status report
+        run: |
+          cat > status-report.md << EOF
+          # 📊 AI Scheduler - Automated Status Report
+
+          **Generated**: $(date)
+          **Commit**: ${{ github.sha }}
+          **Branch**: ${{ github.ref_name }}
+
+          ## 📈 Code Metrics
+          - **Frontend**: ${{ steps.count-lines.outputs.frontend_lines }} lines
+          - **Backend**: ${{ steps.count-lines.outputs.backend_lines }} lines
+          - **Total**: ${{ steps.count-lines.outputs.total_lines }} lines
+
+          ## ✅ Module Status
+          - [x] Frontend (React + TypeScript + Tailwind)
+          - [x] Backend (Express + TypeScript)
+          - [x] Database (Prisma schema)
+          - [x] VS Code workspace configuration
+          - [x] Code quality tooling (ESLint + Prettier)
+          - [x] Documentation (AI integration guides)
+          - [x] PlantUML architecture diagrams
+          - [ ] Redis + BullMQ integration
+          - [ ] AI worker implementation
+          - [ ] OpenAI API integration
+
+          ## 🎯 Next Milestones
+          1. **Phase 1 Completion**: Redis integration (Target: Week 1)
+          2. **Phase 2 Start**: AI worker MVP (Target: Week 2)
+          3. **Phase 3 Planning**: Schedule engine design (Target: Week 3)
+
+          ---
+          *This report is automatically generated on every push/PR.*
+          EOF
+
+          echo "📋 Status report generated"
+          cat status-report.md
+
+      - name: Archive status report
+        uses: actions/upload-artifact@v4
+        with:
+          name: status-report-${{ github.sha }}
+          path: status-report.md
+          retention-days: 30

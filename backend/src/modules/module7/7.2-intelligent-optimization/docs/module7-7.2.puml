@@ -1,0 +1,115 @@
+@startuml Module7-2-IntelligentOptimization
+allowmixing
+
+title Module 7.2 - Intelligent Optimization
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+
+package "Module 7.2 - Intelligent Optimization" #LightGreen {
+
+  class OptimizationFacade {
+    +run(input: OptimizationInput): Promise<OptimizationResult>
+    +selectStrategies(input: OptimizationInput): OptimizationStrategy[]
+    --
+    -strategies: OptimizationStrategy[]
+    -config: OptimizationConfig
+    -mergeDefaults(input: OptimizationInput): OptimizationInput
+    -executeStrategies(): Promise<OptimizationCandidate[]>
+    -analyzeResults(): { status, best }
+  }
+
+  interface OptimizationStrategy {
+    +name: string
+    +supports(input: OptimizationInput): boolean
+    +optimize(input: OptimizationInput): Promise<OptimizationCandidate?>
+  }
+
+  class GeneticAlgorithm {
+    +name: string = "GeneticAlgorithm"
+    +supports(input: OptimizationInput): boolean
+    +optimize(input: OptimizationInput): Promise<OptimizationCandidate?>
+    --
+    -populationSize: number
+    -mutationRate: number
+    -elitismRate: number
+    -initializePopulation(): OptimizationCandidate[]
+    -selectParent(): OptimizationCandidate
+  }
+
+  class SimulatedAnnealing <<stub>> {
+    +name: string = "SimulatedAnnealing"
+    +supports(input: OptimizationInput): boolean
+    +optimize(input: OptimizationInput): Promise<OptimizationCandidate?>
+  }
+
+  class MLOptimization <<stub>> {
+    +name: string = "MLOptimization"
+    +supports(input: OptimizationInput): boolean
+    +optimize(input: OptimizationInput): Promise<OptimizationCandidate?>
+  }
+
+  class AlgorithmContext {
+    +isTimeExceeded(): boolean
+    +getElapsedMs(): number
+    +getRemainingMs(): number
+    --
+    -startTime: number
+    -timeBudgetMs: number
+  }
+
+  class "Factory Function" as Factory {
+    +createOptimizationFacade(config?): OptimizationFacade
+  }
+
+  OptimizationStrategy <|.. GeneticAlgorithm
+  OptimizationStrategy <|.. SimulatedAnnealing
+  OptimizationStrategy <|.. MLOptimization
+  OptimizationFacade --> OptimizationStrategy : uses
+  OptimizationFacade ..> AlgorithmContext : creates
+  GeneticAlgorithm ..> AlgorithmContext : uses
+  Factory ..> OptimizationFacade : creates
+}
+
+package "External Inputs" #LightGray {
+  component "Module 5\nSchedule Data" as Mod5
+  component "Module 6\nConstraint Data" as Mod6
+}
+
+package "Configuration" #LightBlue {
+  class OptimizationConfig {
+    +defaults: { timeBudgetMs, maxIterations }
+  }
+
+  note as FeatureFlags
+    Feature Flags:
+    • ENABLE_GA = true
+    • ENABLE_SA = false
+    • ENABLE_ML = false
+  end note
+}
+
+OptimizationFacade ..> Mod5 : consumes
+OptimizationFacade ..> Mod6 : consumes
+OptimizationFacade --> OptimizationConfig : uses
+GeneticAlgorithm --> FeatureFlags : checks ENABLE_GA
+SimulatedAnnealing --> FeatureFlags : checks ENABLE_SA
+MLOptimization --> FeatureFlags : checks ENABLE_ML
+
+note right of OptimizationFacade
+  Strategy Execution Order:
+  1) GeneticAlgorithm (if enabled)
+  2) SimulatedAnnealing (if enabled)
+  3) MLOptimization (if enabled)
+  Time budget enforced across all strategies.
+end note
+
+note bottom of GeneticAlgorithm
+  Active Implementation:
+  • Population evolution
+  • Mutation + elitism
+  • Fitness selection
+  • Time budget compliance
+end note
+
+@enduml

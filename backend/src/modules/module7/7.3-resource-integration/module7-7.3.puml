@@ -1,0 +1,192 @@
+@startuml Module7-3-ResourceIntegration
+!pragma useVerticalIf on
+allowmixing
+title Module 7.3 – Resource-Constraint Integration
+' Keep look consistent with earlier modules
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+skinparam class {
+  BackgroundColor White
+  BorderColor Black
+}
+
+package "Module 7.3 – Resource Integration" #LightGreen {
+  class ResourceConstraintManager {
+    +integrate(input: ConstraintInput): Promise<IntegrationResult>
+    +selectStrategy(flags): AllocationStrategy
+    --
+    -availability: AvailabilityChecker
+    -allocator: SkillBasedAllocation
+    -leveler: ResourceLeveling
+  }
+
+  interface AllocationStrategy {
+    +name: string
+    +supports(input: ConstraintInput): boolean
+    +allocate(input: ConstraintInput): Promise<IntegrationResult>
+  }
+
+  class AvailabilityChecker {
+    +getAvailability(resource: Resource, day: string): number
+    +hasAvailability(resource: Resource, day: string): boolean
+    +reduceAvailability(resource: Resource, day: string, hours: number): Resource
+    --
+    -clamp(value: number, min: number, max: number): number
+  }
+
+  class SkillBasedAllocation {
+    +calculateSkillMatch(resource: Resource, task: Task): SkillMatch
+    +getBestSkillMatches(resources: Resource[], task: Task): SkillMatch[]
+    +canHandleTask(resource: Resource, task: Task): boolean
+    --
+    -calculateOverqualificationPenalty(skills: Skill[], reqs: Requirement[]): number
+    -findMissingSkills(skills: Skill[], reqs: Requirement[]): Requirement[]
+  }
+
+  class ResourceLeveling {
+    +analyzeWorkload(resource: Resource, assignments: Record, days: string[]): WorkloadAnalysis
+    +calculateWorkloadBalance(analyses: WorkloadAnalysis[]): number
+    +findLeastLoadedResource(resources: Resource[], assignments: Record, day: string): Resource
+    --
+    -calculateDailyUtilization(resource: Resource, assignments: Record, days: string[]): DayUtilization[]
+  }
+
+  package strategies {
+    class GreedySkillFit {
+      +name: "greedy-skill-fit"
+      +allocate(input: ConstraintInput): IntegrationResult
+      --
+      -allocateTaskGreedy(task: Task, resources: Resource[]): Allocation
+      -allocateToLeastOverallocated(task: Task, matches: SkillMatch[]): Allocation
+    }
+
+    class MinimalLeveling {
+      +name: "minimal-leveling"
+      +allocate(input: ConstraintInput): IntegrationResult
+      --
+      -allocateTaskWithLeveling(task: Task, resources: Resource[]): Allocation
+      -allocateToBestPartialMatch(task: Task, matches: SkillMatch[]): Allocation
+    }
+  }
+
+  class SkillAnalysisHelpers {
+    +calculateSkillCoverage(resource: Resource, task: Task): number
+    +analyzeSkillGap(resource: Resource, task: Task): SkillGapAnalysis
+  }
+
+  class SharedTypes {
+    +class PriorityQueue<T>
+    +calculateVariance(values: number[]): number
+    +clamp(value: number, min: number, max: number): number
+  }
+
+  ' Relationships inside module
+  AllocationStrategy <|.. GreedySkillFit
+  AllocationStrategy <|.. MinimalLeveling
+
+  ResourceConstraintManager --> AvailabilityChecker : uses
+  ResourceConstraintManager --> SkillBasedAllocation : uses
+  ResourceConstraintManager --> ResourceLeveling : uses
+  ResourceConstraintManager --> AllocationStrategy : selects
+
+  SkillBasedAllocation --> SkillAnalysisHelpers : uses
+  ResourceLeveling --> SharedTypes : uses
+  GreedySkillFit --> AvailabilityChecker : uses
+  GreedySkillFit --> SkillBasedAllocation : uses
+  MinimalLeveling --> AvailabilityChecker : uses
+  MinimalLeveling --> SkillBasedAllocation : uses
+  MinimalLeveling --> ResourceLeveling : uses
+}
+
+package "External Inputs" #LightGray {
+  component "Module5_ScheduleData" as Mod5
+  component "Module6_ConstraintData" as Mod6
+}
+
+package "Configuration" #LightBlue {
+  class Flags {
+    +ENABLE_GREEDY: boolean
+    +ENABLE_LEVELING: boolean
+    +timeBudgetMs: number
+  }
+  
+  class HardCaps {
+    +maxOverallocPct: number
+  }
+  
+  note as PerfTargets
+    Performance Targets (1k tasks):
+    • ≤ 500ms end-to-end
+    • Deterministic outputs (stable sort)
+    • Linear scaling O(T log R)
+  end note
+}
+
+package "Core Types" #LightYellow {
+  class Resource {
+    +id: ResourceId
+    +skills: Skill[]
+    +capacity: number
+    +calendar?: Record<string, number>
+  }
+  
+  class Task {
+    +id: TaskId
+    +duration: number
+    +day: string
+    +requirements: Requirement[]
+  }
+  
+  class ConstraintInput {
+    +resources: Resource[]
+    +tasks: Task[]
+    +hardCaps?: HardCaps
+    +flags?: Flags
+    +timeBudgetMs?: number
+  }
+  
+  class IntegrationResult {
+    +status: "ok" | "conflicts"
+    +allocations: Allocation[]
+    +violations: string[]
+    +metrics: ResultMetrics
+  }
+}
+
+' Cross-package relations
+ResourceConstraintManager ..> Mod5 : consumes
+ResourceConstraintManager ..> Mod6 : consumes
+ResourceConstraintManager ..> ConstraintInput : accepts
+ResourceConstraintManager ..> IntegrationResult : returns
+GreedySkillFit ..> Flags : checks ENABLE_GREEDY
+MinimalLeveling ..> Flags : checks ENABLE_LEVELING
+ResourceLeveling ..> HardCaps : uses maxOverallocPct
+ResourceConstraintManager .. PerfTargets
+
+note right of ResourceConstraintManager
+  Orchestration Flow:
+  1) Validate input constraints
+  2) Select strategy based on flags
+  3) Execute allocation strategy
+  4) Apply leveling (if hybrid mode)
+  5) Return IntegrationResult with metrics
+end note
+
+note bottom of SkillBasedAllocation
+  Skill Matching Algorithm:
+  • Calculate skill scores with weights
+  • Identify missing/underqualified skills
+  • Apply overqualification penalty
+  • Sort deterministically by total score
+end note
+
+note bottom of ResourceLeveling
+  Leveling Strategy:
+  • Analyze current workload distribution
+  • Calculate utilization variance
+  • Find least loaded resources
+  • Balance allocation across resources
+end note
+
+@enduml

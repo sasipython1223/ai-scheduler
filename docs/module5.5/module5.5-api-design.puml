@@ -1,0 +1,75 @@
+@startuml Module55_ScheduleEngineAPI_Design
+!define RECTANGLE class
+skinparam componentStyle rectangle
+title 🧩 Module 5.5 - Schedule Engine API Endpoints
+
+package "Route Layer" {
+  RECTANGLE ScheduleRoute {
+    + POST /api/schedule/calculate
+    - Input JSON payload
+    - Calls ScheduleController
+  }
+}
+
+package "Controller Layer" {
+  RECTANGLE ScheduleController {
+    + handleScheduleCalculation(req, res)
+    - Validates input
+    - Calls ScheduleService
+  }
+}
+
+package "Service Layer" {
+  RECTANGLE ScheduleService {
+    + calculateSchedule(tasks: Task[]): ScheduleResult
+    - Delegates to SchedulerEngine
+    - Formats output
+  }
+}
+
+package "Domain Layer" {
+  RECTANGLE SchedulerEngine {
+    + runCPMScheduling(tasks: Task[]): ScheduleResult
+    - Forward Pass
+    - Backward Pass
+    - Float Calculations
+    - Task Flag Assignment
+  }
+}
+
+package "Validation Layer" {
+  RECTANGLE ScheduleValidator {
+    + validateTasks(tasks): ValidatedTasks
+    + sanitizeTasks(tasks): SanitizedTasks
+    - Used by Controller before passing to Service
+  }
+}
+
+package "Types & Models" {
+  RECTANGLE SharedTypes {
+    - TaskInput
+    - ScheduleResult
+    - ErrorResponse
+  }
+}
+
+package "Tests" {
+  RECTANGLE ScheduleApiTests {
+    - Valid input test
+    - Invalid input test
+    - Missing fields test
+    - API response format test
+    - Full integration scenario test
+  }
+}
+
+ScheduleRoute --> ScheduleController : handle POST
+ScheduleController --> ScheduleValidator : validateTasks()
+ScheduleController --> ScheduleService : calculateSchedule()
+ScheduleService --> SchedulerEngine : runCPMScheduling()
+ScheduleService --> SharedTypes
+SchedulerEngine --> SharedTypes
+ScheduleValidator --> SharedTypes
+ScheduleApiTests --> ScheduleRoute
+
+@enduml
