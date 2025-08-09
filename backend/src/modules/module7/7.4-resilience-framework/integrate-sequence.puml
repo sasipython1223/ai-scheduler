@@ -1,0 +1,100 @@
+@startuml Module7-4-IntegrateSequence
+title Module 7.4 – integrate() sequence
+skinparam shadowing false
+skinparam ParticipantPadding 10
+skinparam BoxPadding 8
+skinparam defaultFontName Consolas
+skinparam ArrowColor #555555
+
+actor Client
+participant "ResilienceAnalyzer" as RA
+participant "RobustnessCalculator" as RC
+participant "VulnerabilityDetector" as VD
+participant "ContingencyPlanner" as CP
+participant "ScenarioGenerator" as SG
+participant "AlternativeScheduler" as AS
+participant "RiskManager" as RM
+participant "RiskMonitor" as RMon
+participant "MitigationStrategies" as MS
+
+== Resilience Analysis Phase ==
+Client -> RA: analyzeScheduleResilience(schedule)
+activate RA
+
+RA -> RC: calculateRobustnessScore(schedule)
+activate RC
+RC -> RC: assessCriticalPathRisk()
+RC -> RC: evaluateResourceRisk()
+RC -> RC: analyzeDependencyChains()
+RC --> RA: ResilienceMetrics
+deactivate RC
+
+RA -> VD: identifyVulnerabilities(schedule)
+activate VD
+VD -> VD: detectCriticalBottlenecks()
+VD -> VD: identifyHighRiskTasks()
+VD -> VD: findResourceConstraints()
+VD --> RA: VulnerabilityReport
+deactivate VD
+
+RA --> Client: ResilienceAnalysis
+deactivate RA
+
+== Contingency Planning Phase ==
+Client -> CP: generateContingencyPlans(schedule, scenarios)
+activate CP
+
+CP -> SG: modelRiskScenarios(schedule)
+activate SG
+SG -> SG: generateWhatIfAnalysis()
+SG -> SG: createStressTestScenarios()
+SG --> CP: RiskScenarios[]
+deactivate SG
+
+loop for each scenario
+  CP -> AS: createAlternativeSchedule(scenario)
+  activate AS
+  AS -> AS: optimizeForResilience()
+  AS -> AS: validateAlternativeFeasibility()
+  AS --> CP: AlternativeSchedule
+  deactivate AS
+end
+
+CP -> CP: validatePlanFeasibility()
+CP --> Client: ContingencyPlan[]
+deactivate CP
+
+== Risk Monitoring Phase ==
+Client -> RM: monitorRiskIndicators()
+activate RM
+
+RM -> RMon: trackRealTimeIndicators(schedule)
+activate RMon
+RMon -> RMon: detectEarlyWarnings()
+RMon -> RMon: calculateRiskTrends()
+RMon --> RM: RiskIndicator[]
+deactivate RMon
+
+alt Risk detected
+  RM -> RM: assessRisks(indicators)
+  RM -> MS: selectMitigationStrategy(risk)
+  activate MS
+  
+  MS -> MS: evaluateStrategyOptions()
+  MS --> RM: MitigationStrategy
+  deactivate MS
+  
+  RM -> MS: executeMitigation(strategy)
+  activate MS
+  MS -> MS: implementMitigationActions()
+  MS --> RM: MitigationResult
+  deactivate MS
+  
+  RM --> Client: RiskMitigated
+else No risks
+  RM --> Client: AllClear
+end
+
+deactivate RM
+
+@enduml

@@ -1,0 +1,223 @@
+@startuml Module7.4-ResilienceFramework
+
+title Module 7.4 - Schedule Resilience Framework Architecture
+
+note as N0
+Advanced Resilience Analysis with Automated Risk Mitigation
+Proactive Schedule Protection and Contingency Planning
+end note
+
+package "Module 7.4 - Resilience Framework" #LightPink {
+    
+    package "7.4.1 - Resilience Analyzer" #LightCoral {
+        class ResilienceAnalyzer {
+            +analyzeScheduleResilience(): ResilienceMetrics
+            +identifyVulnerabilities(): VulnerabilityReport
+            +calculateRobustnessScore(): number
+            +monitorScheduleHealth(): HealthStatus
+            --
+            -metrics: ResilienceMetric[]
+            -thresholds: RiskThreshold[]
+            -analyzer: RobustnessCalculator
+        }
+        
+        class RobustnessCalculator {
+            +calculateBufferSufficiency(): number
+            +assessCriticalPathRisk(): number
+            +evaluateResourceRisk(): number
+            +analyzeDependencyChains(): number
+            --
+            -weightingFactors: WeightMap
+            -algorithms: ScoringAlgorithm[]
+        }
+        
+        class VulnerabilityDetector {
+            +detectCriticalBottlenecks(): string[]
+            +identifyHighRiskTasks(): string[]
+            +findResourceConstraints(): string[]
+            +analyzeTimeboxViolations(): string[]
+            --
+            -detectionRules: Rule[]
+            -riskFactors: RiskFactor[]
+        }
+    }
+    
+    package "7.4.2 - Contingency Planner" #LightGreen {
+        class ContingencyPlanner {
+            +generateContingencyPlans(): ContingencyPlan[]
+            +createAlternativeSchedule(): Schedule
+            +validatePlanFeasibility(): boolean
+            +executeContingencyPlan(): Promise<ExecutionResult>
+            --
+            -scenarios: ContingencyScenario[]
+            -planTemplates: PlanTemplate[]
+            -validator: PlanValidator
+        }
+        
+        class ScenarioGenerator {
+            +modelRiskScenarios(): ContingencyScenario[]
+            +generateWhatIfAnalysis(): ScenarioResult[]
+            +createStressTestScenarios(): StressScenario[]
+            +simulateMonteCarloAnalysis(): SimulationResult
+            --
+            -scenarioLibrary: ScenarioTemplate[]
+            -probabilityModels: ProbabilityModel[]
+        }
+        
+        class AlternativeScheduler {
+            +generateAlternatives(): Schedule[]
+            +optimizeForResilience(): Schedule
+            +balanceRiskVsPerformance(): Schedule
+            +validateAlternativeFeasibility(): boolean
+            --
+            -optimizationEngine: OptimizationEngine
+            -constraintSolver: ConstraintSolver
+        }
+    }
+    
+    package "7.4.3 - Risk Manager" #LightBlue {
+        class RiskManager {
+            +assessRisks(): RiskIndicator[]
+            +monitorRiskIndicators(): Promise<RiskAlert[]>
+            +selectMitigationStrategy(): MitigationStrategy
+            +executeMitigation(): Promise<MitigationResult>
+            --
+            -riskModel: RiskModel
+            -strategies: MitigationStrategy[]
+            -monitor: RiskMonitor
+        }
+        
+        class RiskMonitor {
+            +trackRealTimeIndicators(): RiskIndicator[]
+            +detectEarlyWarnings(): RiskAlert[]
+            +calculateRiskTrends(): TrendAnalysis
+            +generateRiskDashboard(): Dashboard
+            --
+            -indicators: RiskIndicator[]
+            -thresholds: AlertThreshold[]
+            -trendAnalyzer: TrendAnalyzer
+        }
+        
+        class MitigationStrategies {
+            +bufferTimeAdjustment(): MitigationAction
+            +resourceReallocation(): MitigationAction
+            +criticalPathProtection(): MitigationAction
+            +scheduleCompression(): MitigationAction
+            --
+            -strategyLibrary: Strategy[]
+            -executionEngine: ActionExecutor
+        }
+    }
+    
+    package "Risk Response Strategies" #LightYellow {
+        class BufferTimeStrategy {
+            +calculateBufferRequirements(): BufferPlan
+            +distributeBufferTime(): Distribution
+            +validateBufferSufficiency(): boolean
+        }
+        
+        class ResourceReallocationStrategy {
+            +identifyReallocationOpportunities(): Opportunity[]
+            +executeResourceShift(): ReallocationResult
+            +validateResourceConstraints(): boolean
+        }
+        
+        class CriticalPathProtectionStrategy {
+            +protectCriticalTasks(): ProtectionPlan
+            +addContingencyResources(): ResourcePlan
+            +implementFloatBuffers(): BufferPlan
+        }
+        
+        class ScheduleCompressionStrategy {
+            +identifyCompressionOpportunities(): Opportunity[]
+            +optimizeTaskSequencing(): SequenceResult
+            +balanceRiskVsSpeed(): OptimizationResult
+        }
+    }
+}
+
+package "External Integration" #LightGray {
+    class "Module 5\nSchedule Engine" {
+        +provideBaseSchedule()
+        +validateScheduleChanges()
+        +recalculateMetrics()
+    }
+    
+    class "Module 6\nConstraint System" {
+        +validateConstraints()
+        +provideViolationData()
+        +supportAlternativeValidation()
+    }
+    
+    class "Module 7.1-7.3\nOptimization Stack" {
+        +provideOptimizedSchedules()
+        +supportResilienceWeighting()
+        +integrateRiskFactors()
+    }
+    
+    class "Risk Analytics\nExternal Services" {
+        +historicalRiskData()
+        +industryBenchmarks()
+        +predictionModels()
+    }
+}
+
+' Relationships within Module 7.4
+ResilienceAnalyzer --> RobustnessCalculator : uses
+ResilienceAnalyzer --> VulnerabilityDetector : uses
+ContingencyPlanner --> ScenarioGenerator : uses
+ContingencyPlanner --> AlternativeScheduler : uses
+RiskManager --> RiskMonitor : uses
+RiskManager --> MitigationStrategies : uses
+
+' Strategy relationships
+MitigationStrategies --> BufferTimeStrategy : implements
+MitigationStrategies --> ResourceReallocationStrategy : implements
+MitigationStrategies --> CriticalPathProtectionStrategy : implements
+MitigationStrategies --> ScheduleCompressionStrategy : implements
+
+' Cross-component integration
+ResilienceAnalyzer --> ContingencyPlanner : provides analysis
+ContingencyPlanner --> RiskManager : informs strategies
+RiskManager --> ResilienceAnalyzer : requests assessment
+
+' External integration
+ResilienceAnalyzer --> "Module 5\nSchedule Engine" : analyzes
+ContingencyPlanner --> "Module 7.1-7.3\nOptimization Stack" : leverages
+RiskManager --> "Module 6\nConstraint System" : validates
+ScenarioGenerator --> "Risk Analytics\nExternal Services" : enriches
+
+' Data flow
+ResilienceAnalyzer ..> ContingencyPlanner : resilience metrics
+ContingencyPlanner ..> RiskManager : contingency plans
+RiskManager ..> ResilienceAnalyzer : mitigation results
+
+note top of ResilienceAnalyzer
+    **Core Analysis Engine**
+    Quantifies schedule robustness
+    using mathematical models and
+    identifies critical vulnerabilities
+end note
+
+note right of ContingencyPlanner
+    **Scenario Planning**
+    Generates alternative schedules
+    for various risk scenarios with
+    automated feasibility validation
+end note
+
+note bottom of RiskManager
+    **Proactive Risk Control**
+    Real-time monitoring with
+    automated mitigation responses
+    and adaptive strategy selection
+end note
+
+note left of "Risk Response Strategies"
+    **Mitigation Toolkit**
+    Comprehensive strategy library
+    for automated risk response
+    with situational adaptation
+end note
+
+@enduml
