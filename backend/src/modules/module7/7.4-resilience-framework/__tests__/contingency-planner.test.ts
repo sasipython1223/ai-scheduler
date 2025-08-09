@@ -12,23 +12,29 @@ const makeSchedule = (): Schedule => ({
     lastModified: new Date(),
     version: "1.0.0",
     complexity: 1,
-    riskLevel: "low"
-  }
+    riskLevel: "low",
+  },
 });
 
 describe("ContingencyPlanner", () => {
   it("generates ranked viable plans", () => {
-    const cp = new ContingencyPlanner(undefined, undefined, undefined, { maxScenarios: 3, altsPerScenario: 2, minFeasibilityScore: 60 });
+    const cp = new ContingencyPlanner(undefined, undefined, undefined, {
+      maxScenarios: 3,
+      altsPerScenario: 2,
+      minFeasibilityScore: 60,
+    });
     const plans = cp.generateContingencyPlans(makeSchedule());
     expect(Array.isArray(plans)).toBe(true);
     // deterministic order + non-empty when heuristics are in place
   });
 
   it("filters plans below feasibility threshold", () => {
-    const cp = new ContingencyPlanner(undefined, undefined, undefined, { minFeasibilityScore: 95 });
+    const cp = new ContingencyPlanner(undefined, undefined, undefined, {
+      minFeasibilityScore: 95,
+    });
     const plans = cp.generateContingencyPlans(makeSchedule());
     // likely empty when threshold is high
-    expect(plans.every(p => p.feasibility.score >= 95)).toBe(true);
+    expect(plans.every((p) => p.feasibility.score >= 95)).toBe(true);
   });
 
   it("returns empty array for empty schedule scenarios", () => {
