@@ -1,0 +1,165 @@
+#!/usr/bin/env node
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const root = path.resolve(__dirname, '..');
+
+const read = (p) => fs.existsSync(p) ? fs.readFileSync(p, 'utf8') : null;
+const write = (p, s) => fs.writeFileSync(p, s);
+const walk = (dir) => {
+  const out = [];
+  if (!fs.existsSync(dir)) return out;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...walk(full));
+    else out.push(full);
+  }
+  return out;
+};
+
+const checklistPath = path.join(root, 'checklist.json');
+const checklist = JSON.parse(read(checklistPath) || '{}');
+const problems = [];
+
+console.log('🔍 AI Scheduler Roadmap Validator');
+console.log(`📋 Milestone: ${checklist.meta?.milestone || 'n/a'}`);
+console.log(`📅 Updated: ${checklist.meta?.updated || 'n/a'}`);
+console.log('');
+
+// 1) Required folders
+console.log('📁 Checking required folders...');
+(checklist.rules?.requireFolders || []).forEach((f) => {
+  const p = path.join(root, f);
+  if (!fs.existsSync(p)) {
+    problems.push(`Missing folder: ${f}`);
+    console.log(`  ❌ ${f}`);
+  } else {
+    console.log(`  ✅ ${f}`);
+  }
+});
+
+// 2) Max lines per file (soft rule)
+console.log('');
+console.log('📏 Checking file sizes...');
+const maxLines = checklist.rules?.maxLinesPerFile ?? 200;
+const files = walk(root)
+  .filter((f) => /\.(ts|tsx|js|jsx)$/.test(f))
+  .filter((f) => !f.includes('node_modules'))
+  .filter((f) => !f.includes('.test.') && !f.includes('.spec.'))
+  .filter((f) => f.includes('src/'));
+
+const longFiles = [];
+for (const f of files) {
+  const lines = read(f)?.split('\n').length || 0;
+  if (lines > maxLines) {
+    longFiles.push({ f: path.relative(root, f), lines });
+    console.log(`  📏 ${path.relative(root, f)}: ${lines} LOC (exceeds ${maxLines})`);
+  }
+}
+if (longFiles.length) {
+  problems.push(`Files exceeding ${maxLines} LOC: ` + longFiles.map(x => `${x.f} (${x.lines})`).join(', '));
+} else {
+  console.log(`  ✅ All source files under ${maxLines} LOC`);
+}
+
+// 3) Module progress sanity
+console.log('');
+console.log('🎯 Checking module progress...');
+const mod7 = (checklist.modules || []).find(m => m.id === 7);
+if (!mod7) {
+  problems.push('Module 7 missing from checklist.json');
+  console.log('  ❌ Module 7 missing from checklist');
+} else {
+  const progress = mod7.progress ?? 0;
+  console.log(`  📊 Module 7: ${Math.round(progress * 100)}% complete (focus: ${mod7.focus || 'n/a'})`);
+  if (progress < 0.5) {
+    problems.push('Module 7 progress seems low; expected ≥ 0.5 for 7.4 completion');
+  }
+}
+
+// 4) Check for specific Module 7.4 completeness
+console.log('');
+console.log('🔬 Checking Module 7.4 Risk Manager...');
+const riskManagerPath = path.join(root, 'src', 'modules', 'module7', '7.4-resilience-framework');
+if (fs.existsSync(riskManagerPath)) {
+  const riskFiles = walk(riskManagerPath).filter(f => f.endsWith('.ts') && !f.includes('test'));
+  console.log(`  ✅ Risk Manager found: ${riskFiles.length} implementation files`);
+  
+  const testFiles = walk(riskManagerPath).filter(f => f.includes('test'));
+  console.log(`  🧪 Test files: ${testFiles.length} test files`);
+} else {
+  problems.push('Module 7.4 Risk Manager implementation not found');
+  console.log('  ❌ Risk Manager implementation missing');
+}
+
+// 5) Check for Module 7.2 scaffolding (next priority)
+console.log('');
+console.log('🎯 Checking Module 7.2 Optimization Engine (next priority)...');
+const optimizationPath = path.join(root, 'src', 'modules', 'module7', '7.2-intelligent-optimization');
+if (fs.existsSync(optimizationPath)) {
+  console.log('  ✅ Module 7.2 directory exists');
+} else {
+  console.log('  📋 Module 7.2 not yet scaffolded (expected - this is next priority)');
+}
+
+// 6) Generate status.md
+console.log('');
+console.log('📄 Generating status report...');
+const timestamp = new Date().toISOString().split('T')[0];
+const status = `# 🚦 Roadmap Status
+
+- **Milestone:** ${checklist.meta?.milestone || 'n/a'}
+- **Updated:** ${timestamp}
+- **Current Module:** ${checklist.currentModule || 'n/a'}
+- **Current Subtask:** ${checklist.currentSubtask || 'n/a'}
+
+## Modules
+
+${(checklist.modules || []).map(m => {
+  const status = m.done ? '✅' : (m.progress != null ? Math.round(m.progress*100)+'%' : '—');
+  const focus = m.focus ? ` (focus: ${m.focus})` : '';
+  return `- ${m.id}. ${m.name}: ${status}${focus}`;
+}).join('\n')}
+
+## Problems
+
+${problems.length ? problems.map(p => `- ❗ ${p}`).join('\n') : '- None detected ✅'}
+
+## Next Actions
+
+- 🎯 **Immediate:** Begin Module 7.2 Intelligent Optimization Engine scaffolding
+- 📊 **Performance:** Target <10s for 10k task optimization
+- 🔗 **Integration:** Connect with Module 5 (Schedule Engine) and Module 6 (Constraints)
+
+---
+*Generated by scripts/check-roadmap.mjs on ${timestamp}*
+`;
+
+const statusPath = path.join(root, 'docs', 'status.md');
+if (process.argv.includes('--write')) {
+  write(statusPath, status);
+  console.log(`✅ Status written to ${path.relative(root, statusPath)}`);
+} else {
+  console.log('📋 Status preview:');
+  console.log(status);
+}
+
+// Summary
+console.log('');
+console.log('📊 Summary:');
+console.log(`  - Problems found: ${problems.length}`);
+console.log(`  - Files checked: ${files.length}`);
+console.log(`  - Required folders: ${checklist.rules?.requireFolders?.length || 0}`);
+
+// Non‑zero exit if problems exist (for CI)
+if (problems.length) {
+  console.log('');
+  console.log('❌ Validation failed - see problems above');
+  process.exit(2);
+} else {
+  console.log('');
+  console.log('✅ All checks passed!');
+}

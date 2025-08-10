@@ -1,0 +1,40 @@
+{
+  "meta": {
+    "owner": "sasipython1223",
+    "milestone": "Module 7.4 Complete → Module 7.2 Next",
+    "updated": "2025-08-10"
+  },
+  "rules": {
+    "maxLinesPerFile": 200,
+    "requireFolders": [
+      "frontend/src/components/gantt",
+      "frontend/src/components/taskTable",
+      "backend/src/services",
+      "backend/src/jobs",
+      "backend/src/controllers",
+      "backend/src/routes",
+      "backend/src/types",
+      "backend/src/tests",
+      "backend/src/modules/module5",
+      "backend/src/modules/module6",
+      "backend/src/modules/module7",
+      "docs",
+      ".github/workflows"
+    ]
+  },
+  "phases": [
+    { "id": 1, "name": "Foundation", "done": true },
+    { "id": 2, "name": "Core Engine", "done": true },
+    { "id": 3, "name": "Constraints", "done": true },
+    { "id": 4, "name": "Advanced Optimization", "done": false }
+  ],
+  "modules": [
+    {"id": 5, "name": "Develop Schedule Engine", "done": true},
+    {"id": 6, "name": "Add Constraint Optimizer", "done": true},
+    {"id": 7, "name": "Advanced Optimization & Resilience", "progress": 0.75, "focus": "7.2"},
+    {"id": 8, "name": "Build Gantt UI / Task Table", "progress": 0.6}
+  ],
+  "currentModule": 7,
+  "currentSubtask": "7.2",
+  "lastUpdated": "2025-08-10T00:00:00Z"
+}

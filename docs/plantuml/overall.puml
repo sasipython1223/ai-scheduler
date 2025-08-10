@@ -1,0 +1,60 @@
+@startuml overall-architecture
+title AI Scheduler - Overall Architecture
+
+package "Frontend" {
+  [React App] --> [Gantt Chart]
+  [React App] --> [Task Table]
+  [React App] --> [State Management]
+}
+
+package "Backend API" {
+  [Express Server] --> [Schedule Controller]
+  [Express Server] --> [Optimization Controller]
+  [Schedule Controller] --> [Module 5: Core Engine]
+  [Optimization Controller] --> [Module 7: Advanced Optimization]
+}
+
+package "Core Modules" {
+  [Module 5: Core Engine] --> [5.1 Scheduling Engine]
+  [Module 5: Core Engine] --> [5.2 Forward Pass]
+  [Module 5: Core Engine] --> [5.3 Backward Pass]
+  [Module 5: Core Engine] --> [5.4 Critical Path]
+  [Module 5: Core Engine] --> [5.5 API Layer]
+  
+  [Module 6: Constraints] --> [6.1 Validation Engine]
+  [Module 6: Constraints] --> [6.2 Violation Detection]
+  [Module 6: Constraints] --> [6.3 Integration]
+  
+  [Module 7: Advanced Optimization] --> [7.1 Constraint-Aware Scheduler]
+  [Module 7: Advanced Optimization] --> [7.2 Intelligent Optimization]
+  [Module 7: Advanced Optimization] --> [7.3 Resource Integration]
+  [Module 7: Advanced Optimization] --> [7.4 Resilience Framework]
+}
+
+package "Data Layer" {
+  [PostgreSQL] --> [Task Data]
+  [PostgreSQL] --> [Schedule Data]
+  [Redis] --> [Cache Layer]
+  [BullMQ] --> [Job Queue]
+}
+
+[React App] --> [Express Server] : REST API
+[Module 5: Core Engine] --> [PostgreSQL]
+[Module 6: Constraints] --> [PostgreSQL]
+[Module 7: Advanced Optimization] --> [BullMQ] : Async Jobs
+[Module 7: Advanced Optimization] --> [Redis] : Caching
+
+note right of [Module 7.2 Intelligent Optimization]
+  Next Priority:
+  - Genetic algorithms
+  - Optimization strategies
+  - Performance targets: <10s for 10k tasks
+end note
+
+note right of [Module 7.4 Resilience Framework]
+  Recently Completed:
+  - Risk Manager (7/7 tests passing)
+  - Performance: <60s for 5k tasks
+end note
+
+@enduml

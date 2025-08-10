@@ -1,0 +1,57 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Roadmap: Check & Update",
+      "type": "shell",
+      "command": "node scripts/check-roadmap.mjs --write",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": [
+        {
+          "owner": "roadmap",
+          "fileLocation": ["relative", "${workspaceFolder}"],
+          "pattern": {
+            "regexp": "^❗ (.*)$",
+            "message": 1
+          }
+        }
+      ]
+    },
+    {
+      "label": "Roadmap: Quick Check",
+      "type": "shell", 
+      "command": "node scripts/check-roadmap.mjs",
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Test: Module 7.4 Risk Manager",
+      "type": "shell",
+      "command": "npm test -- --testPathPattern='7.4.*test'",
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always"
+      }
+    },
+    {
+      "label": "Roadmap: Generate Status",
+      "type": "shell",
+      "command": "node scripts/check-roadmap.mjs --write && echo 'Status updated in docs/status.md'",
+      "group": "build"
+    }
+  ]
+}

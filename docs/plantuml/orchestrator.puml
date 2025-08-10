@@ -1,0 +1,65 @@
+@startuml orchestrator
+title Module 7 - Advanced Optimization Orchestrator
+
+actor "User" as user
+participant "API Gateway" as api
+participant "Optimization Orchestrator" as orchestrator
+participant "7.1 Constraint-Aware" as constraint
+participant "7.2 Intelligent Optimization" as optimization
+participant "7.3 Resource Integration" as resource
+participant "7.4 Resilience Framework" as resilience
+database "PostgreSQL" as db
+queue "BullMQ" as queue
+
+user -> api : POST /optimize/schedule
+api -> orchestrator : optimizeSchedule(request)
+
+orchestrator -> constraint : validateConstraints(tasks)
+constraint -> db : query constraints
+constraint --> orchestrator : validation result
+
+alt constraints valid
+  orchestrator -> optimization : generateOptimizations(tasks)
+  note right of optimization
+    Current Status: TODO
+    Target: <10s for 10k tasks
+    Algorithms: Genetic, Simulated Annealing
+  end note
+  
+  optimization -> queue : enqueue optimization job
+  queue --> optimization : job result
+  optimization --> orchestrator : optimization strategies
+  
+  orchestrator -> resource : allocateResources(optimized_tasks)
+  resource -> db : query resource availability
+  resource --> orchestrator : resource allocation
+  
+  orchestrator -> resilience : assessRisks(final_schedule)
+  note right of resilience
+    Status: COMPLETE ✅
+    Risk Manager: 7/7 tests passing
+    Performance: <60s for 5k tasks
+  end note
+  
+  resilience -> resilience : runRiskCycle()
+  resilience --> orchestrator : risk assessment + mitigations
+  
+  orchestrator -> db : save optimized schedule
+  orchestrator --> api : optimized schedule
+  api --> user : HTTP 200 + schedule
+else constraints invalid
+  constraint --> orchestrator : validation errors
+  orchestrator --> api : HTTP 400 + errors
+  api --> user : validation errors
+end
+
+note over orchestrator
+  Orchestration Pattern:
+  1. Validate constraints (7.1) ✅
+  2. Generate optimizations (7.2) 🎯 NEXT
+  3. Allocate resources (7.3) 📋 PLANNED
+  4. Assess risks (7.4) ✅ COMPLETE
+  5. Return optimized schedule
+end note
+
+@enduml

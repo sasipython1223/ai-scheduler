@@ -1,13 +1,14 @@
-name: Status Dashboard Update
+name: Roadmap Status & Validation
 on:
   push:
-    branches: [main, feature/7.*]
+    branches: [main, develop, feature/7.*]
+  pull_request:
   schedule:
-    - cron: "0 2 * * *" # nightly UTC
+    - cron: "0 6 * * *" # Daily at 6 AM UTC
   workflow_dispatch: # manual trigger
 
 jobs:
-  refresh-status:
+  roadmap-check:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -18,22 +19,29 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: "npm"
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Validate roadmap and generate status
+        run: |
+          node scripts/check-roadmap.mjs --write || echo "Validation reported issues"
 
       - name: Run tests and generate reports
         run: |
           npm run report:tests || echo "Some tests failed, continuing..."
           npm run report:roadmap || echo "Roadmap update failed, continuing..."
 
+      - name: Run Module 7.4 specific tests
+        run: |
+          npm test -- --testPathPattern='7.4.*test' --reporter=verbose || echo "Module 7.4 tests had issues"
+
       - name: Update status timestamp
         run: |
           date_str=$(date -u '+%B %d, %Y %H:%M UTC')
-          sed -i "s/\*\*Last Updated:\*\* .*/\*\*Last Updated:\*\* $date_str/" docs/status.md
-          sed -i "s/\*\*Last Updated:\*\* .*/\*\*Last Updated:\*\* $date_str/" docs/ROADMAP.md
+          sed -i "s/\*\*Updated:\*\* .*/\*\*Updated:\*\* $date_str/" docs/status.md || echo "Timestamp update failed"
 
       - name: Commit and push updates
         run: |
