@@ -1,0 +1,19 @@
+# .github/CODEOWNERS
+# These owners will be requested for review when anyone opens a pull request.
+
+# Backend source code - core business logic
+backend/src/**           @sasipython1223
+
+# Database schema and migrations - critical infrastructure  
+database/**              @sasipython1223
+
+# Documentation diagrams - architecture decisions
+docs/diagrams/**         @sasipython1223
+
+# CI/CD workflows - deployment and security controls
+.github/workflows/**     @sasipython1223
+
+# Root configuration files
+*.json                   @sasipython1223
+*.md                     @sasipython1223
+.gitignore               @sasipython1223

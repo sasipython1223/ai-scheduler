@@ -40,12 +40,20 @@ jobs:
       NODE_ENV: test
     steps:
       - uses: actions/checkout@v4
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: backend/package-lock.json
+          
+      - name: Cache Prisma engines
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/prisma
+          key: prisma-${{ runner.os }}-${{ hashFiles('backend/package-lock.json') }}
+          
       - name: Install deps
         working-directory: backend
         run: npm ci
@@ -62,3 +70,25 @@ jobs:
       - name: Quick test
         working-directory: backend
         run: npx vitest run src/modules/module7/7.2-intelligent-optimization/__tests__/integration.test.ts
+        
+      - name: Dump DB snapshot (for repro)
+        run: |
+          CONTAINER_ID=$(docker ps --filter "ancestor=postgres:15-alpine" --format "{{.ID}}")
+          docker exec $CONTAINER_ID pg_dump -U scheduler_user ai_scheduler > db-snapshot.sql
+          
+      - name: Upload DB snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-snapshot
+          path: db-snapshot.sql
+          retention-days: 3
+          
+      - name: Enforce repo size sanity
+        run: |
+          BYTES=$(git ls-files | xargs -I{} stat -c%s {} 2>/dev/null | awk '{s+=$1} END{print s}')
+          echo "Repository content size: $BYTES bytes"
+          if [ "$BYTES" -gt 200000000 ]; then
+            echo "::error ::Repository content >200MB ($BYTES bytes)"
+            exit 1
+          fi
+          echo "✅ Repository size within limits"

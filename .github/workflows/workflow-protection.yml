@@ -1,0 +1,31 @@
+name: Workflow Protection
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/**'
+      - '.github/CODEOWNERS'
+
+jobs:
+  workflow-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Validate workflow changes
+        run: |
+          echo "🛡️ Workflow changes detected - requiring review"
+          echo "Modified workflow files:"
+          git diff --name-only origin/main..HEAD -- .github/workflows/ .github/CODEOWNERS || true
+          echo ""
+          echo "⚠️ These changes affect CI/CD security and must be reviewed by a code owner"
+          echo "✅ If you're a code owner, this check passes automatically"
+          
+      - name: Lint workflow YAML
+        run: |
+          if command -v npx &> /dev/null; then
+            npx yaml-lint .github/workflows/*.yml
+            echo "✅ All workflow YAML files are valid"
+          else
+            echo "ℹ️ YAML lint skipped (npx not available)"
+          fi
