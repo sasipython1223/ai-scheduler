@@ -1,0 +1,60 @@
+name: PlantUML Validate & Render
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    paths:
+      - "docs/diagrams/**"
+      - ".github/workflows/plantuml-validate.yml"
+  workflow_dispatch:
+
+jobs:
+  plantuml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Find .puml files
+        id: scan
+        run: |
+          set -e
+          PUMLS=$(git ls-files 'docs/diagrams/**/*.puml' || true)
+          echo "count=$(echo "$PUMLS" | grep -c '.puml' || echo 0)" >> $GITHUB_OUTPUT
+          printf '%s\n' "$PUMLS" > puml-files.txt
+
+      - name: Enforce 200 LOC per diagram
+        if: steps.scan.outputs.count != '0'
+        run: |
+          set -e
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            LINES=$(wc -l < "$f")
+            if [ "$LINES" -gt 200 ]; then
+              echo "::error file=$f::Diagram exceeds 200 LOC ($LINES)"
+              exit 1
+            fi
+          done < puml-files.txt
+          echo " All diagrams 200 LOC"
+
+      - name: Render PUML  SVG
+        if: steps.scan.outputs.count != '0'
+        run: |
+          set -e
+          docker run --rm -v "$PWD/docs/diagrams:/ws" ghcr.io/plantuml/plantuml \
+            sh -lc 'find . -name "*.puml" -print0 | xargs -0 -I{} plantuml -tsvg "{}"'
+          echo " Rendered SVGs"
+
+      - name: Upload SVGs
+        if: steps.scan.outputs.count != '0'
+        uses: actions/upload-artifact@v4
+        with:
+          name: plantuml-svg
+          path: docs/diagrams/**/*.svg
+          retention-days: 7
+
+      - name: No diagrams? Skip gracefully
+        if: steps.scan.outputs.count == '0'
+        run: echo "ℹ No .puml files found under docs/diagrams  skipping."

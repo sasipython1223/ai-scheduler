@@ -1,0 +1,64 @@
+name: DB Smoke
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    paths:
+      - "backend/**"
+      - "database/**"
+      - "scripts/**"
+      - ".github/workflows/db-smoke.yml"
+  workflow_dispatch:
+jobs:
+  db-smoke:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: ai_scheduler
+          POSTGRES_USER: scheduler_user
+          POSTGRES_PASSWORD: scheduler_pass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U scheduler_user -d ai_scheduler"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd="redis-cli ping || exit 1"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+    env:
+      DATABASE_URL: postgresql://scheduler_user:scheduler_pass@localhost:5432/ai_scheduler?schema=public
+      REDIS_URL: redis://localhost:6379
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+      - name: Install deps
+        working-directory: backend
+        run: npm ci
+      - name: Migrate
+        working-directory: backend
+        run: npx prisma migrate deploy --schema=../database/prisma/schema.prisma
+      - name: Seed
+        working-directory: backend
+        run: node ../scripts/seed.mjs
+      - name: Smoke via Prisma
+        working-directory: backend
+        run: |
+          node -e "import('@prisma/client').then(async m=>{const p=new m.PrismaClient();await p.();const c=await p.project.count();console.log('Projects:',c);await p.();})"
+      - name: Quick test
+        working-directory: backend
+        run: npx vitest run src/modules/module7/7.2-intelligent-optimization/__tests__/integration.test.ts

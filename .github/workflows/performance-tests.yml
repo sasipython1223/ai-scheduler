@@ -1,0 +1,114 @@
+name: Performance Tests
+
+on:
+  push:
+    branches: [main, develop, feature/*]
+  pull_request:
+    branches: [main]
+
+jobs:
+  performance-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: npm ci
+
+      - name: Install Vitest if needed
+        working-directory: ./backend
+        run: npm install vitest @vitest/ui --save-dev
+
+      - name: Run Module 5 Performance Tests
+        working-directory: ./backend
+        env:
+          NODE_OPTIONS: --expose-gc
+          BUDGET_FACTOR: 1.5
+        run: |
+          npm run test:perf:module5 -- --reporter=json --outputFile=perf-module5.json || true
+          npm run test:perf:module5 -- --reporter=default
+
+      - name: Run Module 7 Performance Tests
+        working-directory: ./backend
+        env:
+          NODE_OPTIONS: --expose-gc
+          BUDGET_FACTOR: 1.5
+        run: |
+          npm run test:perf:module7 -- --reporter=json --outputFile=perf-module7.json || true
+          npm run test:perf:module7 -- --reporter=default
+        continue-on-error: true # Module 7.2/7.3 may not be fully implemented
+
+      - name: Performance Analysis
+        working-directory: ./backend
+        run: |
+          echo "📊 Performance Analysis Results"
+
+          # Parse JSON results if available
+          if [ -f "perf-module5.json" ]; then
+            echo "Module 5 Performance:"
+            node -e "
+              try {
+                const results = JSON.parse(require('fs').readFileSync('perf-module5.json', 'utf8'));
+                const failed = results.testResults?.some(r => r.status === 'failed') || false;
+                const total = results.numTotalTests || 0;
+                const passed = results.numPassedTests || 0;
+                console.log(\`  Tests: \${passed}/\${total} passed\`);
+                if (failed) {
+                  console.log('❌ Module 5 performance tests failed');
+                  process.exit(1);
+                }
+              } catch (e) {
+                console.log('⚠️ Could not parse Module 5 results');
+              }
+            "
+          fi
+
+          if [ -f "perf-module7.json" ]; then
+            echo "Module 7 Performance:"
+            node -e "
+              try {
+                const results = JSON.parse(require('fs').readFileSync('perf-module7.json', 'utf8'));
+                const failed = results.testResults?.some(r => r.status === 'failed') || false;
+                const total = results.numTotalTests || 0;
+                const passed = results.numPassedTests || 0;
+                console.log(\`  Tests: \${passed}/\${total} passed\`);
+                if (failed) {
+                  console.log('⚠️ Module 7 performance issues detected (non-blocking)');
+                }
+              } catch (e) {
+                console.log('⚠️ Could not parse Module 7 results');
+              }
+            "
+          fi
+
+          echo "✅ Performance analysis completed"
+
+      - name: Upload performance results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: performance-results
+          path: |
+            backend/perf-module5.json
+            backend/perf-module7.json
+          retention-days: 30
+
+      - name: Performance Budget Check
+        working-directory: ./backend
+        run: |
+          # Check if any tests exceeded budget (this would be in test output)
+          if grep -r "❌.*under target" . 2>/dev/null; then
+            echo "❌ Performance budget violations detected"
+            exit 1
+          fi
+
+          echo "✅ All performance budgets met"

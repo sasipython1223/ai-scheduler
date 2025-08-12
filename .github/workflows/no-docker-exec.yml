@@ -1,0 +1,29 @@
+name: Ban docker-exec in backend runtime
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    paths:
+      - "backend/src/**"
+      - ".github/workflows/no-docker-exec.yml"
+  push:
+    branches: [main, develop]
+    paths:
+      - "backend/src/**"
+      - ".github/workflows/no-docker-exec.yml"
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fail if "docker exec" appears in backend/src
+        run: |
+          set -e
+          if grep -RIn -E "docker\s+exec" backend/src --exclude-dir=__tests__ --exclude-dir=tests --exclude-dir=scripts ; then
+            echo "::error ::'docker exec' found in backend/src (use Prisma/Redis clients instead)."
+            exit 1
+          fi
+          echo " No forbidden docker calls in backend/src"
